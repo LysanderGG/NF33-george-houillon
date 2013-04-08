@@ -2,13 +2,13 @@ package com.example.nf33;
 
 import android.hardware.SensorListener;
 
+@SuppressWarnings("deprecation")
 public class Sensor implements SensorListener {
 	float x, y, z;
 
 	private final MainActivity parent_activity;
 
-	Sensor(MainActivity a)
-	{
+	public Sensor(MainActivity a) {
 		parent_activity = a;
 	}
 
