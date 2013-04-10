@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NF33</string>
+    <string name="app_name">NF33-detection-de-pas</string>
     <string name="action_settings">Settings</string>
     <string name="axis_x">X: </string>
     <string name="axis_y">Y: </string>
     <string name="axis_z">Z: </string>
+    <string name="save">Save</string>
 
 </resources>

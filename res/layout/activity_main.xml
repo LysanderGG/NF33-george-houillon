@@ -32,4 +32,21 @@
         android:layout_marginTop="14dp"
         android:text="@string/axis_z" />
 
+    <Button
+        android:id="@+id/buttonLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_axis_z"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp"
+        android:text="@string/save" />
+
+    <TextView
+        android:id="@+id/textViewButtonLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/buttonLog"
+        android:layout_below="@+id/buttonLog"
+        android:text="" />
+
 </RelativeLayout>
