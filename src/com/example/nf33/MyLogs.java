@@ -15,24 +15,24 @@ public class MyLogs {
 	
 	private class LogItem {
 		private float[] m_coords;
-		private long 	m_time;
+		private long 	m_uTime;
 		
 		public LogItem(float[] _coords, long _time) {
 			m_coords 	= _coords;
-			m_time 		= _time;
+			m_uTime 	= _time;
 		}
 	}
 	
-	private int					m_length;
+	private int					m_iLength;
 	private ArrayList<LogItem>	m_list;
 	
 	public MyLogs(int _length) {
-		m_length 	= (_length > 0) ? _length : 0;
+		m_iLength 	= (_length > 0) ? _length : 0;
 		m_list 		= new ArrayList<LogItem>();
 	}
 	
 	public void add(long _time, float _x, float _y, float _z) {
-		if (m_length > 0 && m_list.size() >= m_length) {
+		if (m_iLength > 0 && m_list.size() >= m_iLength) {
 			// Rotation de l'historique
 			m_list.remove(m_list.size()-1);
 		}
@@ -44,7 +44,7 @@ public class MyLogs {
 		try {
 			String txt = "Accelerometer datas logs - " + Calendar.getInstance().toString() + "\n";
 			for(LogItem li : m_list) {
-				txt += "" + li.m_time + ";"; 
+				txt += "" + li.m_uTime + ";"; 
 				for(float f : li.m_coords) {
 					txt += "" + f + ";";
 				}

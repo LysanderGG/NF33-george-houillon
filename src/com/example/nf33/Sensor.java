@@ -4,7 +4,7 @@ import android.hardware.SensorListener;
 
 @SuppressWarnings("deprecation")
 public class Sensor implements SensorListener {
-	float x, y, z;
+	float m_fX, m_fY, m_fZ;
 
 	private final MainActivity parent_activity;
 
@@ -17,10 +17,10 @@ public class Sensor implements SensorListener {
 
 	@Override
 	public void onSensorChanged(int arg0, float[] arg1) {
-		x = arg1[0];
-		y = arg1[1];
-		z = arg1[2];
-		parent_activity.handleMeasure(x, y, z);
+		m_fX = arg1[0];
+		m_fY = arg1[1];
+		m_fZ = arg1[2];
+		parent_activity.handleMeasure(m_fX, m_fY, m_fZ);
 	}
 
 }
