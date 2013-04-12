@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
 				
-		m_logButton = (Button)findViewById(R.id.button_log);
+		//m_logButton = (Button)findViewById(R.id.button_log);
 
 		m_sensor = new Sensor(this);
 		SensorManager m = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -52,12 +52,19 @@ public class MainActivity extends Activity {
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 		
-		m_logButton.setOnClickListener(new OnClickListener() {
-			
+		// Buttons delegates implementation
+		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				m_history.writeLogFile(TAG, LOG_FILENAME);
 				m_tvLogButton.setText("Logs saved.");
+			}
+		});
+		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				m_iStepsCounter = 0;
+				m_tvStepsCounter.setText(getString(R.string.steps_number) + " 0");
 			}
 		});
 	}
@@ -80,7 +87,7 @@ public class MainActivity extends Activity {
 		}
 		
 		if(detectStep()) {
-			m_tvStepsCounter.setText(getString(R.string.steps_number) + ++m_iStepsCounter);
+			m_tvStepsCounter.setText(getString(R.string.steps_number) + " " + (++m_iStepsCounter));
 		}
 		
 	}

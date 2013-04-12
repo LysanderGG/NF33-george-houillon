@@ -8,5 +8,5 @@
     <string name="axis_z">Z: </string>
     <string name="save">Save</string>
     <string name="steps_number">Nombre de pas : </string>
-
+	<string name="reset">Reset</string>
 </resources>
