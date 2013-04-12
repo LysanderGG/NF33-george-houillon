@@ -13,19 +13,43 @@ import android.util.Log;
 
 public class MyLogs {
 	
-	private class LogItem {
+	public class LogItem {
 		private float[] m_coords;
-		private long 	m_uTime;
+		private long 	m_lTime;
 		
 		public LogItem(float[] _coords, long _time) {
 			m_coords 	= _coords;
-			m_uTime 	= _time;
+			m_lTime 	= _time;
+		}
+		
+		public float[] getCoords() {
+			return m_coords;
+		}
+		
+		public float getX() {
+			return m_coords[0];
+		}
+
+		public float getY() {
+			return m_coords[1];
+		}
+		
+		public float getZ() {
+			return m_coords[2];
+		}
+		
+		public long getTime() {
+			return m_lTime;
 		}
 	}
 	
 	private int					m_iLength;
 	private ArrayList<LogItem>	m_list;
 	
+	public ArrayList<LogItem> getList() {
+		return m_list;
+	}
+
 	public MyLogs(int _length) {
 		m_iLength 	= (_length > 0) ? _length : 0;
 		m_list 		= new ArrayList<LogItem>();
@@ -44,7 +68,7 @@ public class MyLogs {
 		try {
 			String txt = "Accelerometer datas logs - " + Calendar.getInstance().toString() + "\n";
 			for(LogItem li : m_list) {
-				txt += "" + li.m_uTime + ";"; 
+				txt += "" + li.m_lTime + ";"; 
 				for(float f : li.m_coords) {
 					txt += "" + f + ";";
 				}

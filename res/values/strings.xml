@@ -7,5 +7,6 @@
     <string name="axis_y">Y: </string>
     <string name="axis_z">Z: </string>
     <string name="save">Save</string>
+    <string name="steps_number">Nombre de pas : </string>
 
 </resources>
