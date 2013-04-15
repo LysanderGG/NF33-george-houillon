@@ -4,7 +4,11 @@ import android.hardware.SensorListener;
 
 @SuppressWarnings("deprecation")
 public class Sensor implements SensorListener {
+
 	float m_fX, m_fY, m_fZ;
+
+	// Moyenne expérimentale du bruit sur l'axe Z (téléphone à plat)
+	public static final float G = 10.131f;
 
 	private final MainActivity parent_activity;
 

@@ -1,5 +1,6 @@
 package com.example.nf33;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
 	private Button		m_logButton;
 	private MyLogs 		m_history;
 	private float		m_fLastMax			= 0.0f;
+	private float		m_fLastMin			= 0.0f;
 	private	long		m_lLastMaxTime		= 0;
 	private int			m_iStepsCounter		= 0;
 
@@ -31,6 +33,22 @@ public class MainActivity extends Activity {
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
 
+	/*
+	 * Constantes propres à l'algorithme de détection de pas
+	 */
+
+	private static final int STATE_ASCENDENT  = 0;
+	private static final int STATE_DESCENDENT = 1;
+	private static final int STATE_CAPTURING  = 2;
+
+	private int state = STATE_CAPTURING;
+
+	private static final float NEGATIVE_LIMIT = -1.5f;
+	private static final float POSITIVE_LIMIT = +1.5f;
+
+	private static final float AMPLITUDE_MINIMUM = 3.125f;
+
+	private ArrayList<Integer> stateHistory;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -52,6 +70,8 @@ public class MainActivity extends Activity {
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 
+		stateHistory = new ArrayList<Integer>(3);
+
 		// Buttons delegates implementation
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
@@ -67,7 +87,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				m_iStepsCounter = 0;
-				m_tvStepsCounter.setText(getString(R.string.steps_number) + " 0");
+				m_tvStepsCounter.setText("0");
 				m_history = new MyLogs(HISTORY_MAX_LENGTH); // TODO méthode "clear"
 			}
 		});
@@ -81,19 +101,74 @@ public class MainActivity extends Activity {
 		m_tvAxisZ.setText(getString(R.string.axis_z) + _z);
 
 		// Data logging
-		long _time = Calendar.getInstance().getTimeInMillis();
-		m_history.add(_time, _x, _y, _z);
+		long time = Calendar.getInstance().getTimeInMillis();
+		m_history.add(time, _x, _y, _z);
 
-		// Last Maximum Z value update
-		if(_z > m_fLastMax) {
-			m_fLastMax 		= _z;
-			m_lLastMaxTime 	= _time;
+		_z += Sensor.G;
+
+		switch (state) {
+		case STATE_CAPTURING:
+			if (_z < NEGATIVE_LIMIT) {
+				m_fLastMin = _z;
+				setState(STATE_DESCENDENT);
+			} else if (_z > POSITIVE_LIMIT) {
+				m_fLastMax = _z;
+				setState(STATE_ASCENDENT);
+			}
+			break;
+		case STATE_ASCENDENT:
+			if (_z > m_fLastMax) {
+				m_fLastMax = _z;
+			}
+			if (_z < POSITIVE_LIMIT) {
+				setState(STATE_CAPTURING);
+			}
+			break;
+		case STATE_DESCENDENT:
+			if (_z < m_fLastMin) {
+				m_fLastMin = _z;
+			}
+			if (_z > NEGATIVE_LIMIT) {
+				if (amplitudeCheck() && sequenceCheck()) {
+					stepDetected();
+				}
+				setState(STATE_CAPTURING);
+			}
+			break;
 		}
+	}
 
-		if(detectStep()) {
-			m_tvStepsCounter.setText(getString(R.string.steps_number) + " " + (++m_iStepsCounter));
+	/*
+	 * Change d'état en maintenant une liste des 3 derniers états
+	 */
+
+	private void setState(int newState) {
+		state = newState;
+		if (stateHistory.size() >= 3) {
+			stateHistory.remove(2);
 		}
+		stateHistory.add(0, newState);
+	}
 
+	private boolean amplitudeCheck() {
+		return m_fLastMax - m_fLastMin > AMPLITUDE_MINIMUM;
+	}
+
+	/*
+	 * Vérifie qu'une séquence A-C-D a bien été réalisée.
+	 */
+
+	private boolean sequenceCheck() {
+		return stateHistory.size() >= 3
+		    && stateHistory.get(1) == STATE_CAPTURING
+		    && stateHistory.get(2) == STATE_ASCENDENT;
+	}
+
+	private void stepDetected() {
+		++m_iStepsCounter;
+		m_fLastMax = 0f;
+		m_fLastMin = 0f;
+		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 	}
 
 	private boolean detectStep() {
