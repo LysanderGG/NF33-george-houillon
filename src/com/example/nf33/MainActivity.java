@@ -25,12 +25,12 @@ public class MainActivity extends Activity {
 	private float		m_fLastMax			= 0.0f;
 	private	long		m_lLastMaxTime		= 0;
 	private int			m_iStepsCounter		= 0;
-	
-	private static final float	STEP_DETECTION_LIMIT	= 3.0f;
-	private static final int 	HISTORY_MAX_LENGTH 		= 4096;
-	private static final String LOG_FILENAME			= "NF33.log";
-	private static final String TAG 					= MainActivity.class.getName();
-	
+
+	private static final float	STEP_DETECTION_LIMIT	= 5.0f;
+	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
+	private static final String LOG_FILENAME			= "NF33.csv";
+	private static final String TAG 					= "NF33-data";
+
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -40,24 +40,27 @@ public class MainActivity extends Activity {
 
 		m_tvAxisX 	= (TextView)findViewById(R.id.tv_axis_x);
 		m_tvAxisY 	= (TextView)findViewById(R.id.tv_axis_y);
-		m_tvAxisZ 	= (TextView)findViewById(R.id.tv_axis_z);		
+		m_tvAxisZ 	= (TextView)findViewById(R.id.tv_axis_z);
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
-				
+
 		//m_logButton = (Button)findViewById(R.id.button_log);
 
 		m_sensor = new Sensor(this);
 		SensorManager m = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		m.registerListener(m_sensor, SensorManager.SENSOR_ACCELEROMETER);
+		m.registerListener(m_sensor, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
-		
+
 		// Buttons delegates implementation
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				m_history.writeLogFile(TAG, LOG_FILENAME);
-				m_tvLogButton.setText("Logs saved.");
+				if (m_history.writeLogFile(TAG, LOG_FILENAME)) {
+					m_tvLogButton.setText("Logs ok.");
+				} else {
+					m_tvLogButton.setText("Logs failed.");
+				}
 			}
 		});
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
@@ -65,6 +68,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				m_iStepsCounter = 0;
 				m_tvStepsCounter.setText(getString(R.string.steps_number) + " 0");
+				m_history = new MyLogs(HISTORY_MAX_LENGTH); // TODO méthode "clear"
 			}
 		});
 	}
@@ -75,21 +79,21 @@ public class MainActivity extends Activity {
 		m_tvAxisX.setText(getString(R.string.axis_x) + _x);
 		m_tvAxisY.setText(getString(R.string.axis_y) + _y);
 		m_tvAxisZ.setText(getString(R.string.axis_z) + _z);
-		
+
 		// Data logging
 		long _time = Calendar.getInstance().getTimeInMillis();
 		m_history.add(_time, _x, _y, _z);
-		
+
 		// Last Maximum Z value update
 		if(_z > m_fLastMax) {
 			m_fLastMax 		= _z;
 			m_lLastMaxTime 	= _time;
 		}
-		
+
 		if(detectStep()) {
 			m_tvStepsCounter.setText(getString(R.string.steps_number) + " " + (++m_iStepsCounter));
 		}
-		
+
 	}
 
 	private boolean detectStep() {
@@ -98,6 +102,7 @@ public class MainActivity extends Activity {
 			if(m_history.getList().get(0).getZ() < m_history.getList().get(1).getZ()) {
 				// y = ax + b
 				float a = (m_fLastMax - m_history.getList().get(0).getZ()) - ((m_lLastMaxTime - m_history.getList().get(0).getTime()) / 1000);
+				a = Math.abs(a);
 				if(a > STEP_DETECTION_LIMIT) {
 					m_fLastMax		= -9.81f;
 					m_lLastMaxTime 	= 0;
