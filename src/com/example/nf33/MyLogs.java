@@ -118,7 +118,7 @@ public class MyLogs {
 				);
 			}
 			// Pour Excel, LibreOffice...
-			txt = txt.replace('.', ',');
+			//txt = txt.replace('.', ',');
             try {
             	BufferedWriter buf = new BufferedWriter(new FileWriter(file, false));
                 buf.append(txt);
