@@ -59,8 +59,6 @@ public class MainActivity extends Activity {
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
 
-		//m_logButton = (Button)findViewById(R.id.button_log);
-
 		m_sensor = new Sensor(this);
 		SensorManager m = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		m.registerListener(m_sensor, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
@@ -163,33 +161,6 @@ public class MainActivity extends Activity {
 
 	private void stepDetected() {
 		++m_iStepsCounter;
-		m_fLastMax = 0f;
-		m_fLastMin = 0f;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 	}
-
-	private boolean detectStep() {
-		if(m_history != null && m_history.getList().size() > 1) {
-			// Z acceleration down phase
-			if(m_history.getList().get(0).getZ() < m_history.getList().get(1).getZ()) {
-				// y = ax + b
-				float a = (m_fLastMax - m_history.getList().get(0).getZ()) - ((m_lLastMaxTime - m_history.getList().get(0).getTime()) / 1000);
-				a = Math.abs(a);
-				if(a > STEP_DETECTION_LIMIT) {
-					m_fLastMax		= -9.81f;
-					m_lLastMaxTime 	= 0;
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 }
