@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 	private float		m_fLastMin			= 0.0f;
 	private int			m_iStepsCounter		= 0;
 
-	private static final int 	HISTORY_MAX_LENGTH 		= 128;
+	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
 
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
@@ -95,43 +95,55 @@ public class MainActivity extends Activity {
 	void handleMeasure(float _x, float _y, float _z)
 	{
 		// Acceleration display on the screen
-		m_tvAxisX.setText(getString(R.string.axis_x) + _x);
+		/*m_tvAxisX.setText(getString(R.string.axis_x) + _x);
 		m_tvAxisY.setText(getString(R.string.axis_y) + _y);
-		m_tvAxisZ.setText(getString(R.string.axis_z) + _z);
+		m_tvAxisZ.setText(getString(R.string.axis_z) + _z);*/
 
 		// Data logging
 		long time = Calendar.getInstance().getTimeInMillis();
 		m_history.add(time, _x, _y, _z);
 
-		_z += Sensor.G;
+		float norm = (float) Math.sqrt(
+				_x * _x +
+				_y * _y +
+				_z * _z
+		);
+
+		// Dessine la norme sur la barre de progrès
+		int progress = (int) ((norm / (2*Sensor.G)) * 100);
+		if (progress > 100) progress = 100;
+		m_progressBar.setProgress(progress);
+
+		// Déduit la gravité de la norme
+		norm -= Sensor.G;
 
 		switch (state) {
 		// Cherche simultanément un minimum et un maximum local
 		case STATE_CAPTURING:
-			if (_z < NEGATIVE_LIMIT) {
-				m_fLastMin = _z;
+			if (norm < NEGATIVE_LIMIT) {
+				m_fLastMin = norm;
 				setState(STATE_DESCENDENT);
-			} else if (_z > POSITIVE_LIMIT) {
-				m_fLastMax = _z;
+			} else if (norm > POSITIVE_LIMIT) {
+				m_fLastMax = norm;
 				setState(STATE_ASCENDENT);
 			}
 			break;
 		// Enregistre un passage à l'état ascendant avant de recherche de nouveau une phase déscendante
 		case STATE_ASCENDENT:
-			if (_z > m_fLastMax) {
-				m_fLastMax = _z;
+			if (norm > m_fLastMax) {
+				m_fLastMax = norm;
 			}
-			if (_z < POSITIVE_LIMIT) {
+			if (norm < POSITIVE_LIMIT) {
 				setState(STATE_CAPTURING);
 			}
 			break;
 		// Une détection de pas ne peut avoir lieu qu'en phase déscendente (choix arbitraire)
 		case STATE_DESCENDENT:
-			if (_z < m_fLastMin) {
-				m_fLastMin = _z;
+			if (norm < m_fLastMin) {
+				m_fLastMin = norm;
 			}
 			// Cherche une intersection avec l'origine
-			if (_z > 0) {
+			if (norm > 0) {
 				if (amplitudeCheck() && sequenceCheck()) {
 					stepDetected();
 				}
