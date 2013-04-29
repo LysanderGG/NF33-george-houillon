@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
 		_z += Sensor.G;
 
 		switch (state) {
+		// Cherche simultanément un minimum et un maximum local
 		case STATE_CAPTURING:
 			if (_z < NEGATIVE_LIMIT) {
 				m_fLastMin = _z;
@@ -111,6 +112,7 @@ public class MainActivity extends Activity {
 				setState(STATE_ASCENDENT);
 			}
 			break;
+		// Enregistre un passage à l'état ascendant avant de recherche de nouveau une phase déscendante
 		case STATE_ASCENDENT:
 			if (_z > m_fLastMax) {
 				m_fLastMax = _z;
@@ -119,14 +121,19 @@ public class MainActivity extends Activity {
 				setState(STATE_CAPTURING);
 			}
 			break;
+		// Une détection de pas ne peut avoir lieu qu'en phase déscendente (choix arbitraire)
 		case STATE_DESCENDENT:
 			if (_z < m_fLastMin) {
 				m_fLastMin = _z;
 			}
-			if (_z > NEGATIVE_LIMIT) {
+			// Cherche une intersection avec l'origine
+			if (_z > 0) {
 				if (amplitudeCheck() && sequenceCheck()) {
 					stepDetected();
 				}
+				// Réinitialise la machine à états
+				m_fLastMax = 0f;
+				m_fLastMin = 0f;
 				setState(STATE_CAPTURING);
 			}
 			break;
