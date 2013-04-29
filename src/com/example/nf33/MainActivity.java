@@ -25,8 +25,8 @@ public class MainActivity extends Activity {
 	private float		m_fLastMin			= 0.0f;
 	private int			m_iStepsCounter		= 0;
 
-	private static final float	STEP_DETECTION_LIMIT	= 5.0f;
-	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
+	private static final int 	HISTORY_MAX_LENGTH 		= 128;
+
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
 
@@ -40,10 +40,10 @@ public class MainActivity extends Activity {
 
 	private int state = STATE_CAPTURING;
 
-	private static final float NEGATIVE_LIMIT = -1.5f;
-	private static final float POSITIVE_LIMIT = +1.5f;
+	private static final float NEGATIVE_LIMIT = -1.25f;
+	private static final float POSITIVE_LIMIT = +1.25f;
 
-	private static final float AMPLITUDE_MINIMUM = 3.125f;
+	private static final float AMPLITUDE_MINIMUM = 3.0f;
 
 	private ArrayList<Integer> stateHistory;
 
