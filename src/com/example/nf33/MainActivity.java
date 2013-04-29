@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -20,6 +21,7 @@ public class MainActivity extends Activity {
 	                 	m_tvLogButton,
 	                 	m_tvStepsCounter;
 	private MyLogs 		m_history;
+	private ProgressBar m_progressBar;
 
 	private float		m_fLastMax			= 0.0f;
 	private float		m_fLastMin			= 0.0f;
@@ -59,6 +61,8 @@ public class MainActivity extends Activity {
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
 
+		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
+
 		m_sensor = new Sensor(this);
 		SensorManager m = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		m.registerListener(m_sensor, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
@@ -72,9 +76,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (m_history.writeLogFile(TAG, LOG_FILENAME)) {
-					m_tvLogButton.setText("Logs ok.");
+					//m_tvLogButton.setText("Logs ok.");
 				} else {
-					m_tvLogButton.setText("Logs failed.");
+					//m_tvLogButton.setText("Logs failed.");
 				}
 			}
 		});
