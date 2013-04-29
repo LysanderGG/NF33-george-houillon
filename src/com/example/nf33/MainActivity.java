@@ -7,10 +7,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -21,11 +19,10 @@ public class MainActivity extends Activity {
 	                 	m_tvAxisZ,
 	                 	m_tvLogButton,
 	                 	m_tvStepsCounter;
-	private Button		m_logButton;
 	private MyLogs 		m_history;
+
 	private float		m_fLastMax			= 0.0f;
 	private float		m_fLastMin			= 0.0f;
-	private	long		m_lLastMaxTime		= 0;
 	private int			m_iStepsCounter		= 0;
 
 	private static final float	STEP_DETECTION_LIMIT	= 5.0f;
