@@ -94,14 +94,14 @@ public class MainActivity extends Activity {
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				reset();
+				resetAll();
 			}
 		});
 		findViewById(R.id.tgbtnAxis).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				m_bMultiAxis = !m_bMultiAxis;
-				reset();
+				resetAll();
 			}
 		});
 	}
@@ -201,9 +201,22 @@ public class MainActivity extends Activity {
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 	}
 	
-	private void reset() {
+	/*
+	 * Reset methods
+	 */
+	
+	private void resetStepsCounter() {
 		m_iStepsCounter = 0;
 		m_tvStepsCounter.setText("0");
-		m_history = new MyLogs(HISTORY_MAX_LENGTH); // TODO methode "clear"
 	}
+	
+	private void resetHistory() {
+		m_history.clear();
+	}
+	
+	private void resetAll() {
+		resetStepsCounter();
+		resetHistory();
+	}
+	
 }

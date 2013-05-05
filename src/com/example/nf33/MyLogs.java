@@ -51,7 +51,7 @@ public class MyLogs {
 
 	public MyLogs(int _length) {
 		m_iLength 	= (_length > 0) ? _length : 0;
-		m_list 		= new ArrayList<LogItem>();
+		m_list 		= new ArrayList<LogItem>(m_iLength);
 	}
 
 	public void add(long _time, float _x, float _y, float _z) {
@@ -136,5 +136,9 @@ public class MyLogs {
             return false;
         }
 		return true;
+	}
+	
+	public void clear() {
+		m_list.clear();
 	}
 }
