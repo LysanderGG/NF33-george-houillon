@@ -9,4 +9,6 @@
     <string name="save">Save</string>
     <string name="steps_number">Nombre de pas : </string>
 	<string name="reset">Reset</string>
+	<string name="axis_1">1 Axe</string>
+	<string name="axis_multi">Multi Axes</string>
 </resources>

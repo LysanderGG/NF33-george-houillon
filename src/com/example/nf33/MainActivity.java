@@ -11,29 +11,39 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
-	private Sensor 		m_sensor;
-	private TextView 	m_tvAxisX,
-	                 	m_tvAxisY,
-	                 	m_tvAxisZ,
-	                 	m_tvLogButton,
-	                 	m_tvStepsCounter;
-	private MyLogs 		m_history;
-	private ProgressBar m_progressBar;
+	private Sensor 			m_sensor;
+	private TextView 		m_tvAxisX,
+	                 		m_tvAxisY,
+	                 		m_tvAxisZ,
+	                 		m_tvLogButton,
+	                 		m_tvStepsCounter;
+	private MyLogs 			m_history;
+	private ProgressBar 	m_progressBar;
 
+	private int			m_iStepsCounter		= 0;
+	
 	private float		m_fLastMax			= 0.0f;
 	private float		m_fLastMin			= 0.0f;
-	private int			m_iStepsCounter		= 0;
+	
+	private boolean		m_bMultiAxis		= false;
+	
+	private ArrayList<Integer> stateHistory;
 
+	/*
+	 * Constantes de l'application 
+	 */
+	
 	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
 
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
 
 	/*
-	 * Constantes propres à l'algorithme de détection de pas
+	 * Constantes propres a l'algorithme de detection de pas
 	 */
 
 	private static final int STATE_ASCENDENT  = 0;
@@ -47,7 +57,6 @@ public class MainActivity extends Activity {
 
 	private static final float AMPLITUDE_MINIMUM = 3.0f;
 
-	private ArrayList<Integer> stateHistory;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -85,9 +94,14 @@ public class MainActivity extends Activity {
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				m_iStepsCounter = 0;
-				m_tvStepsCounter.setText("0");
-				m_history = new MyLogs(HISTORY_MAX_LENGTH); // TODO méthode "clear"
+				reset();
+			}
+		});
+		findViewById(R.id.tgbtnAxis).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				m_bMultiAxis = !m_bMultiAxis;
+				reset();
 			}
 		});
 	}
@@ -185,5 +199,11 @@ public class MainActivity extends Activity {
 	private void stepDetected() {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
+	}
+	
+	private void reset() {
+		m_iStepsCounter = 0;
+		m_tvStepsCounter.setText("0");
+		m_history = new MyLogs(HISTORY_MAX_LENGTH); // TODO methode "clear"
 	}
 }
