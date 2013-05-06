@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
@@ -114,6 +115,9 @@ public class MainActivity extends Activity {
 				    	 m_tvStepsCounter.setText("0");
 				    	 m_tvStepsCounter.setTextColor(Color.BLACK);
 				    	 toggleActivity(true);
+				    	 // Vibrate for 300 milliseconds
+				    	 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				    	 v.vibrate(300);
 				     }
 				  }.start();
 			}
