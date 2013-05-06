@@ -144,13 +144,13 @@ public class MainActivity extends Activity {
 			minNorm = Math.min(minNorm, normZ);
 			
 			if(minNorm == normX) {
-				norm = _x;
+				norm = Math.abs(_x);
 				m_tvAxis.setText("X");
 			} else if(minNorm == normY) {
-				norm = _y;
+				norm = Math.abs(_y);
 				m_tvAxis.setText("Y");
 			} else {
-				norm = _z;
+				norm = Math.abs(_z);
 				m_tvAxis.setText("Z");
 			}
 		} else {
@@ -162,8 +162,8 @@ public class MainActivity extends Activity {
 		if (progress > 100) progress = 100;
 		m_progressBar.setProgress(progress);
 
-		// DÃ©duit la gravitÃ© de la norme
-		norm -= Sensor.G;
+		// Déduit la gravité de la norme
+			norm -= Sensor.G;
 
 		switch (state) {
 		// Cherche simultanÃ©ment un minimum et un maximum local
