@@ -13,12 +13,14 @@ import android.util.Log;
 public class MyLogs {
 
 	public class LogItem {
-		private final float[] m_coords;
-		private final long 	m_lTime;
+		private final float[] 	m_coords;
+		private final long 		m_lTime;
+		private boolean 		m_bIsStepDetected;
 
-		public LogItem(float[] _coords, long _time) {
-			m_coords 	= _coords;
-			m_lTime 	= _time;
+		public LogItem(float[] _coords, boolean _isStepDetected, long _time) {
+			m_coords 			= _coords;
+			m_bIsStepDetected	= _isStepDetected;
+			m_lTime 			= _time;
 		}
 
 		public float[] getCoords() {
@@ -37,8 +39,16 @@ public class MyLogs {
 			return m_coords[2];
 		}
 
+		public boolean getIsStepDetected() {
+			return m_bIsStepDetected;
+		}
+		
 		public long getTime() {
 			return m_lTime;
+		}
+	
+		public void setIsStepDetected(boolean _value) {
+			m_bIsStepDetected = _value;
 		}
 	}
 
@@ -55,12 +65,16 @@ public class MyLogs {
 	}
 
 	public void add(long _time, float _x, float _y, float _z) {
+		add(_time, _x, _y, _z, false);
+	}
+	
+	public void add(long _time, float _x, float _y, float _z, boolean _isStepDetected) {
 		if (m_iLength > 0 && m_list.size() >= m_iLength) {
 			// Rotation de l'historique
 			m_list.remove(m_list.size()-1);
 		}
 
-		m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _time));
+		m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _isStepDetected, _time));
 	}
 
 	public boolean writeLogFile(String _tag, String _filename) {
@@ -107,14 +121,15 @@ public class MyLogs {
             }
 
             // Génération des données texte
-			String txt = "timestamp;X;Y;Z\n";
+			String txt = "timestamp;X;Y;Z;StepDetected\n";
 			for (LogItem li : m_list) {
 				txt += String.format(
-					"%d;%f;%f;%f\n",
+					"%d;%f;%f;%f;%d\n",
 					li.m_lTime,
 					li.m_coords[0],
 					li.m_coords[1],
-					li.m_coords[2]
+					li.m_coords[2],
+					(li.m_bIsStepDetected) ? 1 : 0
 				);
 			}
 			// Pour Excel, LibreOffice...
@@ -140,5 +155,12 @@ public class MyLogs {
 	
 	public void clear() {
 		m_list.clear();
+	}
+	
+	/**
+	 * Add a StepDectected to the last LogItem
+	 */
+	public void addStepDetected() {
+		m_list.get(0).setIsStepDetected(true);
 	}
 }

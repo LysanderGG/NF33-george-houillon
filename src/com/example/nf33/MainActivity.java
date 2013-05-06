@@ -276,6 +276,9 @@ public class MainActivity extends Activity {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 		
+		// Add step detection in history
+		m_history.addStepDetected();
+		
 		if(m_stepListener != null) {
 			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
 		}
