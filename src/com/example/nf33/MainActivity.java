@@ -11,16 +11,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+
+import com.example.nf33.MyLogs.LogItem;
 
 public class MainActivity extends Activity {
 
 	private Sensor 			m_sensor;
-	private TextView 		m_tvAxisX,
-	                 		m_tvAxisY,
-	                 		m_tvAxisZ,
+	private TextView 		m_tvLogs,
 	                 		m_tvLogButton,
-	                 		m_tvStepsCounter;
+	                 		m_tvStepsCounter,
+							m_tvAxis;
 	private MyLogs 			m_history;
 	private ProgressBar 	m_progressBar;
 
@@ -64,11 +64,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		m_tvAxisX 	= (TextView)findViewById(R.id.tv_axis_x);
-		m_tvAxisY 	= (TextView)findViewById(R.id.tv_axis_y);
-		m_tvAxisZ 	= (TextView)findViewById(R.id.tv_axis_z);
+		m_tvLogs			= (TextView)findViewById(R.id.tvLogs);
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
+		m_tvAxis	= (TextView)findViewById(R.id.tv_axis);
 
 		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
@@ -109,30 +108,65 @@ public class MainActivity extends Activity {
 	void handleMeasure(float _x, float _y, float _z)
 	{
 		// Acceleration display on the screen
-		/*m_tvAxisX.setText(getString(R.string.axis_x) + _x);
-		m_tvAxisY.setText(getString(R.string.axis_y) + _y);
-		m_tvAxisZ.setText(getString(R.string.axis_z) + _z);*/
+		String txt = getString(R.string.axis_x) + _x + "\n" + getString(R.string.axis_y) + _y + "\n" + getString(R.string.axis_z) + _z + "\n";
 
 		// Data logging
 		long time = Calendar.getInstance().getTimeInMillis();
 		m_history.add(time, _x, _y, _z);
 
-		float norm = (float) Math.sqrt(
-				_x * _x +
-				_y * _y +
-				_z * _z
-		);
-
-		// Dessine la norme sur la barre de progrès
+		float norm = (float) Math.sqrt(_x * _x + _y * _y + _z * _z);
+		txt += "Norm : " + norm + "\n";
+		
+		if(!m_bMultiAxis){
+			// 1 axe seulement
+			// Determination de l'axe majeur sur les 10 dernieres mesures
+			ArrayList<LogItem> history = m_history.getList();
+			float normX = 0;
+			float normY = 0;
+			float normZ = 0;
+			float nbElements = Math.min(history.size(), 10);
+			
+			for(int i = 0; i < nbElements; ++i) {
+				float x = history.get(i).getX();
+				float y = history.get(i).getY();
+				float z = history.get(i).getZ();
+				float normInst = (float)Math.sqrt(x * x + y * y + z * z);
+				normX += Math.abs(Math.abs(x) - normInst) / nbElements;
+				normY += Math.abs(Math.abs(y) - normInst) / nbElements;
+				normZ += Math.abs(Math.abs(z) - normInst) / nbElements;
+			}
+			
+			txt += "normX - norm = " + normX + "\n";
+			txt += "normY - norm = " + normY + "\n";
+			txt += "normZ - norm = " + normZ + "\n";
+			
+			float minNorm = Math.min(normX, normY);
+			minNorm = Math.min(minNorm, normZ);
+			
+			if(minNorm == normX) {
+				norm = _x;
+				m_tvAxis.setText("X");
+			} else if(minNorm == normY) {
+				norm = _y;
+				m_tvAxis.setText("Y");
+			} else {
+				norm = _z;
+				m_tvAxis.setText("Z");
+			}
+		} else {
+			m_tvAxis.setText("XYZ");
+		}
+	
+		// Dessine la norme sur la barre de progres
 		int progress = (int) ((norm / (2*Sensor.G)) * 100);
 		if (progress > 100) progress = 100;
 		m_progressBar.setProgress(progress);
 
-		// Déduit la gravité de la norme
+		// DÃ©duit la gravitÃ© de la norme
 		norm -= Sensor.G;
 
 		switch (state) {
-		// Cherche simultanément un minimum et un maximum local
+		// Cherche simultanÃ©ment un minimum et un maximum local
 		case STATE_CAPTURING:
 			if (norm < NEGATIVE_LIMIT) {
 				m_fLastMin = norm;
@@ -142,7 +176,7 @@ public class MainActivity extends Activity {
 				setState(STATE_ASCENDENT);
 			}
 			break;
-		// Enregistre un passage à l'état ascendant avant de recherche de nouveau une phase déscendante
+		// Enregistre un passage à l'état ascendant avant de recherche de nouveau une phase descendante
 		case STATE_ASCENDENT:
 			if (norm > m_fLastMax) {
 				m_fLastMax = norm;
@@ -151,7 +185,7 @@ public class MainActivity extends Activity {
 				setState(STATE_CAPTURING);
 			}
 			break;
-		// Une détection de pas ne peut avoir lieu qu'en phase déscendente (choix arbitraire)
+		// Une détection de pas ne peut avoir lieu qu'en phase descendente (choix arbitraire)
 		case STATE_DESCENDENT:
 			if (norm < m_fLastMin) {
 				m_fLastMin = norm;
@@ -168,6 +202,8 @@ public class MainActivity extends Activity {
 			}
 			break;
 		}
+		
+		m_tvLogs.setText(txt);
 	}
 
 	/*
