@@ -19,6 +19,7 @@ import com.example.nf33.MyLogs.LogItem;
 public class MainActivity extends Activity {
 
 	private Sensor 			m_sensor;
+	private SensorManager   m_sensorManager;
 	private TextView 		m_tvLogs,
 	                 		m_tvLogButton,
 	                 		m_tvStepsCounter,
@@ -77,8 +78,7 @@ public class MainActivity extends Activity {
 		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
 		m_sensor = new Sensor(this);
-		SensorManager m = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		m.registerListener(m_sensor, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
+		m_sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 
@@ -98,19 +98,22 @@ public class MainActivity extends Activity {
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Pause the activity
 				resetAll();
-				m_tvStepsCounter.setTextColor(Color.GREEN);
+				toggleActivity(false);
+				m_tvStepsCounter.setText(String.valueOf(COUNTDOWN_DURATION));
+				m_tvStepsCounter.setTextColor(Color.rgb(0, 175, 45));
+				// Wait few seconds and restart the activity
 				new CountDownTimer(COUNTDOWN_DURATION*1000, 500) {
-
 				     @Override
 					public void onTick(long millisUntilFinished) {
 				         m_tvStepsCounter.setText(String.valueOf((int)(millisUntilFinished / 1000)+1));
 				     }
-
 				     @Override
 					public void onFinish() {
 				    	 m_tvStepsCounter.setText("0");
 				    	 m_tvStepsCounter.setTextColor(Color.BLACK);
+				    	 toggleActivity(true);
 				     }
 				  }.start();
 			}
@@ -122,6 +125,14 @@ public class MainActivity extends Activity {
 				resetAll();
 			}
 		});
+		toggleActivity(true);
+	}
+
+	/*
+	 * Suspend or resume the activity (sensor capturing, logging, screen update)
+	 */
+	void toggleActivity(boolean on) {
+		m_sensor.toggleActivity(m_sensorManager, on);
 	}
 
 	void handleMeasure(float _x, float _y, float _z)
