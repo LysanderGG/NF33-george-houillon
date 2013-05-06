@@ -96,11 +96,13 @@ public class MainActivity extends Activity {
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				m_sensor.toggleActivity(false);
 				if (m_history.writeLogFile(TAG, LOG_FILENAME)) {
 					m_tvLogButton.setText("Logs ok.");
 				} else {
 					m_tvLogButton.setText("Logs failed.");
 				}
+				m_sensor.toggleActivity(true);
 			}
 		});
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
@@ -143,7 +145,7 @@ public class MainActivity extends Activity {
 	 * Suspend or resume the activity (sensor capturing, logging, screen update)
 	 */
 	void toggleActivity(boolean on) {
-		m_sensor.toggleActivity(m_sensorManager, on);
+		m_sensor.toggleActivity(on);
 	}
 
 	void handleMeasure(float _x, float _y, float _z)
@@ -329,5 +331,10 @@ public class MainActivity extends Activity {
 		
 		m_stepListener = _listener;
 		return true;
+	}
+	
+	
+	public SensorManager getSensorManager() {
+		return m_sensorManager;
 	}
 }

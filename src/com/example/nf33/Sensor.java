@@ -30,12 +30,12 @@ public class Sensor implements SensorListener {
 		parent_activity.handleMeasure(m_fX, m_fY, m_fZ);
 	}
 
-	public void toggleActivity(SensorManager m, boolean on) {
+	public void toggleActivity(boolean on) {
 		if (on && !active) {
-			m.registerListener(this, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
+			parent_activity.getSensorManager().registerListener(this, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
 			active = true;
 		} else if (!on && active) {
-			m.unregisterListener(this);
+			parent_activity.getSensorManager().unregisterListener(this);
 			active = false;
 		}
 	}

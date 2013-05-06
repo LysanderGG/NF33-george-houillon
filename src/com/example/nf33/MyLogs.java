@@ -78,6 +78,7 @@ public class MyLogs {
 	}
 
 	public boolean writeLogFile(String _tag, String _filename) {
+		
 		try {
 			// Check External Media
 			boolean mExternalStorageAvailable = false;
@@ -119,13 +120,16 @@ public class MyLogs {
             	   return false;
                }
             }
+            
+            // Timestamp le plus faible
+            long lastTimestamp = m_list.get(m_list.size() - 1).getTime();
 
             // Génération des données texte
 			String txt = "timestamp;X;Y;Z;StepDetected\n";
 			for (LogItem li : m_list) {
 				txt += String.format(
 					"%d;%f;%f;%f;%d\n",
-					li.m_lTime,
+					li.m_lTime - lastTimestamp,
 					li.m_coords[0],
 					li.m_coords[1],
 					li.m_coords[2],
