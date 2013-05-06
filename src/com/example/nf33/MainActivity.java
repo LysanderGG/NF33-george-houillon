@@ -263,7 +263,7 @@ public class MainActivity extends Activity {
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 		
 		if(m_stepListener != null) {
-			m_stepListener.setDetected(CONSTANT_STEP_LENGTH);
+			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
 		}
 	}
 	
