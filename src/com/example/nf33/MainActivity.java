@@ -29,20 +29,20 @@ public class MainActivity extends Activity {
 	private ProgressBar 	m_progressBar;
 
 	private int			m_iStepsCounter		= 0;
-	
+
 	private float		m_fLastMax			= 0.0f;
 	private float		m_fLastMin			= 0.0f;
-	
+
 	private boolean		m_bMultiAxis		= false;
-	
+
 	private ArrayList<Integer> stateHistory;
 
 	/*
-	 * Constantes de l'application 
+	 * Constantes de l'application
 	 */
 
 	// seconds
-	private static final int 	COUNTDOWN_DURATION 		= 3;
+	private static final int 	COUNTDOWN_DURATION 		= 5;
 
 	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
 
@@ -150,7 +150,7 @@ public class MainActivity extends Activity {
 
 		float norm = (float) Math.sqrt(_x * _x + _y * _y + _z * _z);
 		txt += "Norm : " + norm + "\n";
-		
+
 		if(!m_bMultiAxis){
 			// 1 axe seulement
 			// Determination de l'axe majeur sur les 10 dernieres mesures
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
 			float normY = 0;
 			float normZ = 0;
 			float nbElements = Math.min(history.size(), 10);
-			
+
 			for(int i = 0; i < nbElements; ++i) {
 				float x = history.get(i).getX();
 				float y = history.get(i).getY();
@@ -169,14 +169,14 @@ public class MainActivity extends Activity {
 				normY += Math.abs(Math.abs(y) - normInst) / nbElements;
 				normZ += Math.abs(Math.abs(z) - normInst) / nbElements;
 			}
-			
+
 			txt += "normX - norm = " + normX + "\n";
 			txt += "normY - norm = " + normY + "\n";
 			txt += "normZ - norm = " + normZ + "\n";
-			
+
 			float minNorm = Math.min(normX, normY);
 			minNorm = Math.min(minNorm, normZ);
-			
+
 			if(minNorm == normX) {
 				norm = Math.abs(_x);
 				m_tvAxis.setText("X");
@@ -190,7 +190,7 @@ public class MainActivity extends Activity {
 		} else {
 			m_tvAxis.setText("XYZ");
 		}
-	
+
 		// Dessine la norme sur la barre de progres
 		int progress = (int) ((norm / (2*Sensor.G)) * 100);
 		if (progress > 100) progress = 100;
@@ -236,7 +236,7 @@ public class MainActivity extends Activity {
 			}
 			break;
 		}
-		
+
 		m_tvLogs.setText(txt);
 	}
 
@@ -270,23 +270,23 @@ public class MainActivity extends Activity {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 	}
-	
+
 	/*
 	 * Reset methods
 	 */
-	
+
 	private void resetStepsCounter() {
 		m_iStepsCounter = 0;
 		m_tvStepsCounter.setText("0");
 	}
-	
+
 	private void resetHistory() {
 		m_history.clear();
 	}
-	
+
 	private void resetAll() {
 		resetStepsCounter();
 		resetHistory();
 	}
-	
+
 }
