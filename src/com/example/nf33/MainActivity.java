@@ -28,14 +28,16 @@ public class MainActivity extends Activity {
 	private MyLogs 			m_history;
 	private ProgressBar 	m_progressBar;
 
-	private int			m_iStepsCounter		= 0;
-
-	private float		m_fLastMax			= 0.0f;
-	private float		m_fLastMin			= 0.0f;
-
-	private boolean		m_bMultiAxis		= false;
-
-	private ArrayList<Integer> stateHistory;
+	private int				m_iStepsCounter	= 0;
+	
+	private float			m_fLastMax		= 0.0f;
+	private float			m_fLastMin		= 0.0f;
+	
+	private boolean			m_bMultiAxis	= false;
+	
+	private ArrayList<Integer> m_stateHistory;
+	
+	private IStepListener	m_stepListener;
 
 	/*
 	 * Constantes de l'application
@@ -48,6 +50,8 @@ public class MainActivity extends Activity {
 
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
+	
+	private static final float CONSTANT_STEP_LENGTH		= 0.70f;
 
 	/*
 	 * Constantes propres a l'algorithme de detection de pas
@@ -59,11 +63,14 @@ public class MainActivity extends Activity {
 
 	private int state = STATE_CAPTURING;
 
-	private static final float NEGATIVE_LIMIT = -1.25f;
-	private static final float POSITIVE_LIMIT = +1.25f;
+	
+	private static final float NEGATIVE_LIMIT_MULTI_AXIS 	= -1.25f;
+	private static final float POSITIVE_LIMIT_MULTI_AXIS 	= +1.25f;
+	private static final float AMPLITUDE_MINIMUM_MULTI_AXIS = 3.0f;
 
-	private static final float AMPLITUDE_MINIMUM = 3.0f;
-
+	private static final float NEGATIVE_LIMIT_1_AXIS 		= -1.25f;
+	private static final float POSITIVE_LIMIT_1_AXIS 		= +1.25f;
+	private static final float AMPLITUDE_MINIMUM_1_AXIS 	= 3.0f;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -74,7 +81,7 @@ public class MainActivity extends Activity {
 		m_tvLogs			= (TextView)findViewById(R.id.tvLogs);
 		m_tvLogButton 		= (TextView)findViewById(R.id.tv_log_button);
 		m_tvStepsCounter	= (TextView)findViewById(R.id.tv_steps_counter);
-		m_tvAxis	= (TextView)findViewById(R.id.tv_axis);
+		m_tvAxis			= (TextView)findViewById(R.id.tv_axis);
 
 		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
@@ -83,16 +90,16 @@ public class MainActivity extends Activity {
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 
-		stateHistory = new ArrayList<Integer>(3);
+		m_stateHistory = new ArrayList<Integer>(3);
 
 		// Buttons delegates implementation
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (m_history.writeLogFile(TAG, LOG_FILENAME)) {
-					//m_tvLogButton.setText("Logs ok.");
+					m_tvLogButton.setText("Logs ok.");
 				} else {
-					//m_tvLogButton.setText("Logs failed.");
+					m_tvLogButton.setText("Logs failed.");
 				}
 			}
 		});
@@ -150,8 +157,7 @@ public class MainActivity extends Activity {
 
 		float norm = (float) Math.sqrt(_x * _x + _y * _y + _z * _z);
 		txt += "Norm : " + norm + "\n";
-
-		if(!m_bMultiAxis){
+		if(!m_bMultiAxis) {
 			// 1 axe seulement
 			// Determination de l'axe majeur sur les 10 dernieres mesures
 			ArrayList<LogItem> history = m_history.getList();
@@ -197,15 +203,15 @@ public class MainActivity extends Activity {
 		m_progressBar.setProgress(progress);
 
 		// Déduit la gravité de la norme
-			norm -= Sensor.G;
+		norm -= Sensor.G;
 
 		switch (state) {
 		// Cherche simultanÃ©ment un minimum et un maximum local
 		case STATE_CAPTURING:
-			if (norm < NEGATIVE_LIMIT) {
+			if (norm < getNegativeLimit()) {
 				m_fLastMin = norm;
 				setState(STATE_DESCENDENT);
-			} else if (norm > POSITIVE_LIMIT) {
+			} else if (norm > getPositiveLimit()) {
 				m_fLastMax = norm;
 				setState(STATE_ASCENDENT);
 			}
@@ -215,7 +221,7 @@ public class MainActivity extends Activity {
 			if (norm > m_fLastMax) {
 				m_fLastMax = norm;
 			}
-			if (norm < POSITIVE_LIMIT) {
+			if (norm < getPositiveLimit()) {
 				setState(STATE_CAPTURING);
 			}
 			break;
@@ -246,14 +252,14 @@ public class MainActivity extends Activity {
 
 	private void setState(int newState) {
 		state = newState;
-		if (stateHistory.size() >= 3) {
-			stateHistory.remove(2);
+		if (m_stateHistory.size() >= 3) {
+			m_stateHistory.remove(2);
 		}
-		stateHistory.add(0, newState);
+		m_stateHistory.add(0, newState);
 	}
 
 	private boolean amplitudeCheck() {
-		return m_fLastMax - m_fLastMin > AMPLITUDE_MINIMUM;
+		return m_fLastMax - m_fLastMin > getAmplitudeMinimum();
 	}
 
 	/*
@@ -261,14 +267,18 @@ public class MainActivity extends Activity {
 	 */
 
 	private boolean sequenceCheck() {
-		return stateHistory.size() >= 3
-		    && stateHistory.get(1) == STATE_CAPTURING
-		    && stateHistory.get(2) == STATE_ASCENDENT;
+		return m_stateHistory.size() >= 3
+		    && m_stateHistory.get(1) == STATE_CAPTURING
+		    && m_stateHistory.get(2) == STATE_ASCENDENT;
 	}
 
 	private void stepDetected() {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
+		
+		if(m_stepListener != null) {
+			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
+		}
 	}
 
 	/*
@@ -288,5 +298,33 @@ public class MainActivity extends Activity {
 		resetStepsCounter();
 		resetHistory();
 	}
-
+	
+	/*
+	 * 1 Axis - MultiAxis methods
+	 */
+	
+	private float getAmplitudeMinimum() {
+		return (m_bMultiAxis) ? AMPLITUDE_MINIMUM_MULTI_AXIS : AMPLITUDE_MINIMUM_1_AXIS;
+	}
+	
+	private float getNegativeLimit() {
+		return (m_bMultiAxis) ? NEGATIVE_LIMIT_MULTI_AXIS : NEGATIVE_LIMIT_1_AXIS;
+	}
+	
+	private float getPositiveLimit() {
+		return (m_bMultiAxis) ? POSITIVE_LIMIT_MULTI_AXIS : POSITIVE_LIMIT_1_AXIS;
+	}
+	
+	/*
+	 * Step Listener
+	 */
+	
+	public boolean setStepListener(IStepListener _listener) {
+		if(m_stepListener != null) {
+			return false;
+		}
+		
+		m_stepListener = _listener;
+		return true;
+	}
 }
