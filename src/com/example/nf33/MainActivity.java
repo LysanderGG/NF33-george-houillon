@@ -26,14 +26,14 @@ public class MainActivity extends Activity {
 	private MyLogs 			m_history;
 	private ProgressBar 	m_progressBar;
 
-	private int			m_iStepsCounter		= 0;
+	private int				m_iStepsCounter	= 0;
 	
-	private float		m_fLastMax			= 0.0f;
-	private float		m_fLastMin			= 0.0f;
+	private float			m_fLastMax		= 0.0f;
+	private float			m_fLastMin		= 0.0f;
 	
-	private boolean		m_bMultiAxis		= false;
+	private boolean			m_bMultiAxis	= false;
 	
-	private ArrayList<Integer> stateHistory;
+	private ArrayList<Integer> m_stateHistory;
 
 	/*
 	 * Constantes de l'application 
@@ -85,16 +85,16 @@ public class MainActivity extends Activity {
 
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 
-		stateHistory = new ArrayList<Integer>(3);
+		m_stateHistory = new ArrayList<Integer>(3);
 
 		// Buttons delegates implementation
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (m_history.writeLogFile(TAG, LOG_FILENAME)) {
-					//m_tvLogButton.setText("Logs ok.");
+					m_tvLogButton.setText("Logs ok.");
 				} else {
-					//m_tvLogButton.setText("Logs failed.");
+					m_tvLogButton.setText("Logs failed.");
 				}
 			}
 		});
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				resetAll();
 				m_tvStepsCounter.setTextColor(Color.GREEN);
-				new CountDownTimer(COUNTDOWN_DURATION*1000, 500) {
+				new CountDownTimer(COUNTDOWN_DURATION * 1000, 500) {
 
 				     @Override
 					public void onTick(long millisUntilFinished) {
@@ -234,10 +234,10 @@ public class MainActivity extends Activity {
 
 	private void setState(int newState) {
 		state = newState;
-		if (stateHistory.size() >= 3) {
-			stateHistory.remove(2);
+		if (m_stateHistory.size() >= 3) {
+			m_stateHistory.remove(2);
 		}
-		stateHistory.add(0, newState);
+		m_stateHistory.add(0, newState);
 	}
 
 	private boolean amplitudeCheck() {
@@ -249,14 +249,16 @@ public class MainActivity extends Activity {
 	 */
 
 	private boolean sequenceCheck() {
-		return stateHistory.size() >= 3
-		    && stateHistory.get(1) == STATE_CAPTURING
-		    && stateHistory.get(2) == STATE_ASCENDENT;
+		return m_stateHistory.size() >= 3
+		    && m_stateHistory.get(1) == STATE_CAPTURING
+		    && m_stateHistory.get(2) == STATE_ASCENDENT;
 	}
 
 	private void stepDetected() {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
+		
+		
 	}
 	
 	/*
