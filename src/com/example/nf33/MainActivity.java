@@ -5,8 +5,10 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
@@ -36,7 +38,10 @@ public class MainActivity extends Activity {
 	/*
 	 * Constantes de l'application 
 	 */
-	
+
+	// seconds
+	private static final int 	COUNTDOWN_DURATION 		= 3;
+
 	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
 
 	private static final String LOG_FILENAME			= "NF33.csv";
@@ -94,6 +99,20 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				resetAll();
+				m_tvStepsCounter.setTextColor(Color.GREEN);
+				new CountDownTimer(COUNTDOWN_DURATION*1000, 500) {
+
+				     @Override
+					public void onTick(long millisUntilFinished) {
+				         m_tvStepsCounter.setText(String.valueOf((int)(millisUntilFinished / 1000)+1));
+				     }
+
+				     @Override
+					public void onFinish() {
+				    	 m_tvStepsCounter.setText("0");
+				    	 m_tvStepsCounter.setTextColor(Color.BLACK);
+				     }
+				  }.start();
 			}
 		});
 		findViewById(R.id.tgbtnAxis).setOnClickListener(new OnClickListener() {
