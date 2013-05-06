@@ -11,21 +11,25 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/tv_axis"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.07"
-            android:text="_" />
-
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
+		
+		<TextView
+	        android:id="@+id/tv_axis"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout_weight="0.07"
+	        android:text="_" />
+	        
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:max="100"
             android:paddingBottom="10dp"
             android:progress="0" />
@@ -34,14 +38,16 @@
     <TextView
         android:id="@+id/tv_steps_counter"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1.52"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:gravity="center"
         android:text="0"
         android:textSize="120sp" />
 
-    <TableRow
-        android:id="@+id/tableRow3"
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center" >
@@ -57,47 +63,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/reset" />
-    </TableRow>
+    </LinearLayout>
+
+    <!-- android:visibility="invisible" -->
+
+    <TextView
+        android:id="@+id/tv_log_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+
+        <ToggleButton
+            android:id="@+id/tgbtnAxis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="@string/axis_1"
+            android:textOn="@string/axis_multi" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvLogs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible" >
-
-        <!-- android:visibility="invisible" -->
-
-        <TextView
-            android:id="@+id/tv_log_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <ToggleButton
-                android:id="@+id/tgbtnAxis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="@string/axis_1"
-                android:textOn="@string/axis_multi" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/tvLogs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+        android:visibility="gone" />
 
 </TableLayout>
