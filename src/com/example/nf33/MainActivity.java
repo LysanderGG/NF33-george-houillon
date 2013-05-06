@@ -34,6 +34,8 @@ public class MainActivity extends Activity {
 	private boolean			m_bMultiAxis	= false;
 	
 	private ArrayList<Integer> m_stateHistory;
+	
+	private IStepListener	m_stepListener;
 
 	/*
 	 * Constantes de l'application 
@@ -46,6 +48,8 @@ public class MainActivity extends Activity {
 
 	private static final String LOG_FILENAME			= "NF33.csv";
 	private static final String TAG 					= "NF33-data";
+	
+	private static final float CONSTANT_STEP_LENGTH		= 0.70f;
 
 	/*
 	 * Constantes propres a l'algorithme de detection de pas
@@ -258,7 +262,9 @@ public class MainActivity extends Activity {
 		++m_iStepsCounter;
 		m_tvStepsCounter.setText(String.valueOf(m_iStepsCounter));
 		
-		
+		if(m_stepListener != null) {
+			m_stepListener.setDetected(CONSTANT_STEP_LENGTH);
+		}
 	}
 	
 	/*
@@ -295,4 +301,16 @@ public class MainActivity extends Activity {
 		return (m_bMultiAxis) ? POSITIVE_LIMIT_MULTI_AXIS : POSITIVE_LIMIT_1_AXIS;
 	}
 	
+	/*
+	 * Step Listener
+	 */
+	
+	public boolean setStepListener(IStepListener _listener) {
+		if(m_stepListener != null) {
+			return false;
+		}
+		
+		m_stepListener = _listener;
+		return true;
+	}
 }

@@ -11,4 +11,6 @@
 	<string name="reset">Reset</string>
 	<string name="axis_1">1 Axe</string>
 	<string name="axis_multi">Multi Axes</string>
+	<string name="default_tv_axis">_</string>
+	<string name="default_tv_steps_counter">0</string>
 </resources>
