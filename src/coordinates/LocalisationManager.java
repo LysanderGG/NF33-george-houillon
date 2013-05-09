@@ -18,13 +18,14 @@ public class LocalisationManager implements IStepListener {
 	
 	private float cap;
 	private ArrayList<Position> positions = new ArrayList<Position>();
-	private float newPosition[] = new float[3];
-	private float oldPosition[] = new float[3];
+	private float newPosition[] = {0,0,0};
+	private float oldPosition[] = {0,0,0};
 	
 	
 	
 	public LocalisationManager(){
-		
+		Position first = new Position(0,0,0);
+		positions.add(first);
 	}
 	
 	
