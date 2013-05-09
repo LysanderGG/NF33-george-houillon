@@ -8,9 +8,12 @@
     <string name="axis_z">Z: </string>
     <string name="save">Save</string>
     <string name="steps_number">Nombre de pas : </string>
-	<string name="reset">Reset</string>
-	<string name="axis_1">1 Axe</string>
-	<string name="axis_multi">Multi Axes</string>
-	<string name="default_tv_axis">_</string>
-	<string name="default_tv_steps_counter">0</string>
+    <string name="reset">Reset</string>
+    <string name="axis_1">1 Axe</string>
+    <string name="axis_multi">Multi Axes</string>
+    <string name="default_tv_axis">_</string>
+    <string name="default_tv_steps_counter">0</string>
+    <string name="title_activity_coordinate">CoordinateActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
