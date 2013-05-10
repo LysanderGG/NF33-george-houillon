@@ -17,8 +17,10 @@ public class CapDetector implements SensorEventListener {
 	float[] resultMatrix=new float[9];
 	float[] values=new float[3];
 	
+	private CapListener capListener;
+	
 	public CapDetector() {
-
+		capListener = null;
 	}
 
 	@Override
@@ -37,6 +39,9 @@ public class CapDetector implements SensorEventListener {
 		y = (float) Math.toDegrees(values[1]);
 		// the roll
 		z = (float) Math.toDegrees(values[2]);
+		
+		//emit a changing
+		capListener.hasChanged(x,y,z);
 	}
 	
 	@Override
@@ -44,6 +49,11 @@ public class CapDetector implements SensorEventListener {
 
 	}
 	
+	//handle listener
+	public void setHasChangedListener(CapListener listener){
+		capListener = listener;
+	}
+		
 	public float getCap(){
 		return x;
 	}

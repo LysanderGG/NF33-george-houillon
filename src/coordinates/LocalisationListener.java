@@ -1,7 +1,5 @@
 package coordinates;
 
-import java.util.EventListener;
-
-public interface LocalisationListener extends EventListener{
-	public void newPosition(int oldPosition[], int newPosition[]);
+public interface LocalisationListener{
+	public abstract void onNewPosition(float oldPosition[], float newPosition[]);
 }
