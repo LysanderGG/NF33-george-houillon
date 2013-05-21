@@ -3,6 +3,11 @@ package com.example.nf33;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 
+/*
+ * Écoute les données de l'accéléromètre du téléphone et les donnes à
+ * l'activité principale de l'application.
+ */
+
 @SuppressWarnings("deprecation")
 public class Sensor implements SensorListener {
 
