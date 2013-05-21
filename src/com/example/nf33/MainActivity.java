@@ -110,6 +110,7 @@ public class MainActivity extends Activity {
 				m_sensor.toggleActivity(true);
 			}
 		});
+		
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -136,6 +137,7 @@ public class MainActivity extends Activity {
 				  }.start();
 			}
 		});
+		
 		findViewById(R.id.tgbtnAxis).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -144,7 +146,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		// SeekBars delegates
+		// SeekBars delegates implementation
 		((SeekBar)(findViewById(R.id.seekBarLimit))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -161,7 +163,7 @@ public class MainActivity extends Activity {
 		((SeekBar)(findViewById(R.id.seekBarAmplitude))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				amplitudeSensibility = 1 + (progress + 1) / (seekBar.getMax() + 1);
+				amplitudeSensibility = 1.0f + (float)(progress + 1) / (float)(seekBar.getMax() + 1);
 			}
 			
 			@Override
@@ -185,14 +187,14 @@ public class MainActivity extends Activity {
 	void handleMeasure(float _x, float _y, float _z)
 	{
 		// Acceleration display on the screen
-		String txt = getString(R.string.axis_x) + _x + "\n" + getString(R.string.axis_y) + _y + "\n" + getString(R.string.axis_z) + _z + "\n";
+		//String txt = getString(R.string.axis_x) + _x + "\n" + getString(R.string.axis_y) + _y + "\n" + getString(R.string.axis_z) + _z + "\n";
 
 		// Data logging
 		long time = Calendar.getInstance().getTimeInMillis();
 		m_history.add(time, _x, _y, _z);
 
 		float norm = (float) Math.sqrt(_x * _x + _y * _y + _z * _z);
-		txt += "Norm : " + norm + "\n";
+		//txt += "Norm : " + norm + "\n";
 		if(!m_bMultiAxis) {
 			// 1 axe seulement
 			// Determination de l'axe majeur sur les 10 dernieres mesures
@@ -212,9 +214,9 @@ public class MainActivity extends Activity {
 				normZ += Math.abs(Math.abs(z) - normInst) / nbElements;
 			}
 
-			txt += "normX - norm = " + normX + "\n";
-			txt += "normY - norm = " + normY + "\n";
-			txt += "normZ - norm = " + normZ + "\n";
+			//txt += "normX - norm = " + normX + "\n";
+			//txt += "normY - norm = " + normY + "\n";
+			//txt += "normZ - norm = " + normZ + "\n";
 
 			float minNorm = Math.min(normX, normY);
 			minNorm = Math.min(minNorm, normZ);
@@ -279,7 +281,7 @@ public class MainActivity extends Activity {
 			break;
 		}
 
-		m_tvLogs.setText(txt);
+		//m_tvLogs.setText(txt);
 	}
 
 	/*
