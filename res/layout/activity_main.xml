@@ -40,11 +40,11 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/tv_limit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/limit"
-            android:width="70dp" />
+            android:width="90dp" />
 
         <SeekBar
             android:id="@+id/seekBarLimit"
@@ -59,11 +59,11 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_ampli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/amplitude"
-            android:width="70dp" />
+            android:width="90dp" />
 
         <SeekBar
             android:id="@+id/seekBarAmplitude"
