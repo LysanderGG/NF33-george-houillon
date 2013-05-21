@@ -29,18 +29,18 @@ public class MainActivity extends StepActivity {
 							m_tvAxis,
 							m_tvLimit,
 							m_tvAmpli;
-	
+
 	private ProgressBar 	m_progressBar;
-	
+
 	private StepDetector	m_stepDetector;
-	
-	private static final String LOG_FILENAME	= "NF33.csv";
+
+	private static final String LOG_FILENAME	= "NF33 dd-MM-yyyy HH:mm:ss.csv";
 	private static final String LOG_DIRNAME		= "NF33-data";
 	private static final String TAG 			= "NF33-data";
-	
+
 	// seconds
 	private static final int 	COUNTDOWN_DURATION 		= 5;
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +57,14 @@ public class MainActivity extends StepActivity {
 		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
 		m_stepDetector = new StepDetector(this);
-		
-		
-		// Implementation des delegates des bouttons 
+
+
+		// Implementation des delegates des bouttons
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				m_stepDetector.toggleActivity(false);
-				if (m_stepDetector.getHistory().writeLogFile(TAG, LOG_DIRNAME, LOG_FILENAME)) {
+				if (m_stepDetector.getHistory().writeLogFile(TAG, LOG_DIRNAME, LOG_FILENAME, true)) {
 					m_tvLogButton.setText("Logs ok.");
 				} else {
 					m_tvLogButton.setText("Logs failed.");
