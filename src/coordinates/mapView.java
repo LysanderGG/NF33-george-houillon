@@ -19,7 +19,8 @@ public class mapView extends View{
 		super(context);
 		activity = (CoordinateActivity) context;
 		
-		localisationManager = new LocalisationManager();
+		// TODO - proprement
+		localisationManager = new LocalisationManager(activity);
 		computeFirstPoint();
 	}
 	

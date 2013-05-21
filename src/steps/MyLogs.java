@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.os.Environment;
@@ -15,7 +17,7 @@ import android.util.Log;
  * Enregistre les mesures successives du senseur.
  */
 
-@SuppressLint("DefaultLocale")
+@SuppressLint({ "DefaultLocale", "SimpleDateFormat" })
 public class MyLogs {
 
 	/*
@@ -107,7 +109,7 @@ public class MyLogs {
 	 *  . la valeur de l'accéléromètre selon Z
 	 */
 
-	public boolean writeLogFile(String _tag, String _dirname, String _filename) {
+	public boolean writeLogFile(String _tag, String _dirname, String _filename, boolean _useDateInName) {
 
 		try {
 			// Vérifie que le périphérique de stockage est utilisable
@@ -138,6 +140,11 @@ public class MyLogs {
             }
 
             // Création du fichier
+            if (_useDateInName) {
+            	SimpleDateFormat dateFormat = new SimpleDateFormat(_filename);
+        		Date date = new Date();
+        		_filename = dateFormat.format(date);
+            }
             File file = new File(dir, _filename);
             if (!file.exists()) {
                try {
