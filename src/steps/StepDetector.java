@@ -7,6 +7,15 @@ import steps.MyLogs.LogItem;
 
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Vibrator;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 public class StepDetector {
 	private int				m_iStepsCounter	= 0;
@@ -20,12 +29,13 @@ public class StepDetector {
 	private ArrayList<Integer> 	m_stateHistory;
 	private IStepListener		m_stepListener;
 	private final StepActivity 	m_parentActivity;
-
+	
 	/*
 	 * Constantes de l'application
 	 */
 
 	private static final int 	HISTORY_MAX_LENGTH 		= 1024;
+	private static final int	N_HISTORY_LOOK_BACK		= 10;
 	private static final float  CONSTANT_STEP_LENGTH	= 0.70f;
 
 	/*
@@ -59,7 +69,6 @@ public class StepDetector {
 		m_history = new MyLogs(HISTORY_MAX_LENGTH);
 
 		m_stateHistory = new ArrayList<Integer>(3);
-
 	}
 
 	/*
@@ -104,42 +113,50 @@ public class StepDetector {
 	
 	void handleMeasure(float _x, float _y, float _z)
 	{
-		// Acceleration display on the screen
-		//String txt = getString(R.string.axis_x) + _x + "\n" + getString(R.string.axis_y) + _y + "\n" + getString(R.string.axis_z) + _z + "\n";
+		m_history.add(
+			Calendar.getInstance().getTimeInMillis(),
+			_x,
+			_y,
+			_z
+		);
 
-		// Data logging
-		long time = Calendar.getInstance().getTimeInMillis();
-		m_history.add(time, _x, _y, _z);
+		float norm;
 
-		float norm = (float) Math.sqrt(_x * _x + _y * _y + _z * _z);
-		//txt += "Norm : " + norm + "\n";
-		if(!m_bMultiAxis) {
-			// 1 axe seulement
-			// Determination de l'axe majeur sur les 10 dernieres mesures
+		// Mode mono-axe: détection de pas sur l'axe majeur
+		if (!m_bMultiAxis) {
 			ArrayList<LogItem> history = m_history.getList();
+
+			// Calcule la norme moyenne de chaque axe sur les derniers échantillons
 			float normX = 0;
 			float normY = 0;
 			float normZ = 0;
-			float nbElements = Math.min(history.size(), 10);
 
-			for(int i = 0; i < nbElements; ++i) {
+			float n = Math.min(history.size(), N_HISTORY_LOOK_BACK);
+
+			for (int i = 0; i < n; ++i) {
 				float x = history.get(i).getX();
 				float y = history.get(i).getY();
 				float z = history.get(i).getZ();
-				float normInst = (float)Math.sqrt(x * x + y * y + z * z);
-				normX += Math.abs(Math.abs(x) - normInst) / nbElements;
-				normY += Math.abs(Math.abs(y) - normInst) / nbElements;
-				normZ += Math.abs(Math.abs(z) - normInst) / nbElements;
+				float normInst = (float)Math.sqrt(
+					x * x +
+					y * y +
+					z * z
+				);
+				normX += Math.abs(Math.abs(x) - normInst);
+				normY += Math.abs(Math.abs(y) - normInst);
+				normZ += Math.abs(Math.abs(z) - normInst);
 			}
 
-			//txt += "normX - norm = " + normX + "\n";
-			//txt += "normY - norm = " + normY + "\n";
-			//txt += "normZ - norm = " + normZ + "\n";
+			normX /= n;
+			normY /= n;
+			normZ /= n;
 
-			float minNorm = Math.min(normX, normY);
-			minNorm = Math.min(minNorm, normZ);
+			float minNorm = Math.min(
+				Math.min(normX, normY),
+				normZ
+			);
 
-			if(minNorm == normX) {
+			if (minNorm == normX) {
 				norm = Math.abs(_x);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_X);
 			} else if(minNorm == normY) {
@@ -149,20 +166,31 @@ public class StepDetector {
 				norm = Math.abs(_z);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Z);
 			}
-		} else {
+		} 
+		// Mode multi-axe: détecte le pas sur la norme tridimentionnelle
+		else {
+			norm = (float)Math.sqrt(
+					_x * _x +
+					_y * _y +
+					_z * _z
+				);
 			m_parentActivity.setMajorAxis(StepActivity.AXIS_3D);
 		}
 
 		// Dessine la norme sur la barre de progres
 		int progress = (int) ((norm / (2*Sensor.G)) * 100);
-		if (progress > 100) progress = 100;
+		if (progress < 0) {
+			progress = 0;
+		} else if (progress > 100) {
+			progress = 100;
+		}
 		m_parentActivity.setAxisBalance(progress);
 
 		// Déduit la gravité de la norme
 		norm -= Sensor.G;
 
 		switch (state) {
-		// Cherche simultanÃ©ment un minimum et un maximum local
+		// Cherche simultanement un minimum et un maximum local.
 		case STATE_CAPTURING:
 			if (norm < getNegativeLimit()) {
 				m_fLastMin = norm;
@@ -172,7 +200,8 @@ public class StepDetector {
 				setState(STATE_ASCENDENT);
 			}
 			break;
-		// Enregistre un passage à l'état ascendant avant de recherche de nouveau une phase descendante
+		// Enregistre un passage à l'état ascendant avant de recherche de nouveau
+		// une phase descendante.
 		case STATE_ASCENDENT:
 			if (norm > m_fLastMax) {
 				m_fLastMax = norm;
@@ -181,7 +210,8 @@ public class StepDetector {
 				setState(STATE_CAPTURING);
 			}
 			break;
-		// Une détection de pas ne peut avoir lieu qu'en phase descendente (choix arbitraire)
+		// Une détection de pas ne peut avoir lieu qu'en phase descendente.
+		// Choix arbitraire.
 		case STATE_DESCENDENT:
 			if (norm < m_fLastMin) {
 				m_fLastMin = norm;
@@ -198,8 +228,6 @@ public class StepDetector {
 			}
 			break;
 		}
-
-		//m_tvLogs.setText(txt);
 	}
 	
 	/*
@@ -213,6 +241,11 @@ public class StepDetector {
 		}
 		m_stateHistory.add(0, newState);
 	}
+
+	/*
+	 * Vérifie qu'une certaine amplitude a bien été enregistrée
+	 * lors de la recherche des minimums et maximums locaux.
+	 */
 
 	private boolean amplitudeCheck() {
 		return m_fLastMax - m_fLastMin > getAmplitudeMinimum();
@@ -228,61 +261,80 @@ public class StepDetector {
 		    && m_stateHistory.get(2) == STATE_ASCENDENT;
 	}
 
+	/*
+	 * Enregistre un pas.
+	 */
+
 	private void stepDetected() {
 		++m_iStepsCounter;
 		m_parentActivity.setStepsCounter(m_iStepsCounter);
 		
 		// Add step detection in history
 		m_history.addStepDetected();
-		
-		if(m_stepListener != null) {
+		if (m_stepListener != null) {
 			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
 		}
 	}
 	
 	/*
-	 * Reset methods
+	 * Remet à zéro le compteur de pas.
 	 */
-
 	public void resetStepsCounter() {
 		m_iStepsCounter = 0;
 	}
 
+	/*
+	 * Remet à zéro l'historique de l'application.
+	 */
 	public void resetHistory() {
 		m_history.clear();
 	}
 
-	public void resetAll() {
+	/*
+	 * Remet à zéro toute la mémoire de l'application.
+	 */
+	private void resetAll() {
 		resetStepsCounter();
 		resetHistory();
 	}
-	
+
 	/*
-	 * 1 Axis - MultiAxis methods
+	 * Récupère l'amplitude minimale à dépasser pour valider un pas.
+	 * Prend en compte le mode de l'application (mono-axe ou multi-axe).
 	 */
-	
+
 	private float getAmplitudeMinimum() {
 		return ((m_bMultiAxis) ? AMPLITUDE_DEFAULT_MINIMUM_MULTI_AXIS : AMPLITUDE_DEFAULT_MINIMUM_1_AXIS) * m_fAmplitudeSensibility;
 	}
-	
+
+	/*
+	 * Récupère la borne minimale à dépasser pour changer d'état.
+	 * Prend en compte le mode de l'application (mono-axe ou multi-axe).
+	 */
+
 	private float getNegativeLimit() {
 		return ((m_bMultiAxis) ? NEGATIVE_DEFAULT_LIMIT_MULTI_AXIS : NEGATIVE_DEFAULT_LIMIT_1_AXIS) * m_fLimitSensibility;
 	}
-	
+
+	/*
+	 * Récupère la borne maximale à dépasser pour changer d'état.
+	 * Prend en compte le mode de l'application (mono-axe ou multi-axe).
+	 */
+
 	private float getPositiveLimit() {
 		return ((m_bMultiAxis) ? POSITIVE_DEFAULT_LIMIT_MULTI_AXIS : POSITIVE_DEFAULT_LIMIT_1_AXIS) * m_fLimitSensibility;
 	}
-	
+
 	/*
-	 * Step Listener
+	 * Spécifie l'écouteur de pas.
 	 */
-	
+
 	public boolean setStepListener(IStepListener _listener) {
-		if(m_stepListener != null) {
+		if (m_stepListener != null) {
 			return false;
 		}
-		
 		m_stepListener = _listener;
 		return true;
 	}
+
 }

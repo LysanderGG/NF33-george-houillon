@@ -13,8 +13,11 @@
     <string name="axis_multi">Multi Axes</string>
     <string name="default_tv_axis">_</string>
     <string name="default_tv_steps_counter">0</string>
-    <string name="title_activity_coordinate">CoordinateActivity</string>
-    <string name="hello_world">Hello world!</string>
 	<string name="limit">Limit</string>
 	<string name="amplitude">Amplitude</string>
+	
+	<string name="title_activity_coordinate">CoordinateActivity</string>
+	<string name="hello_world">Hello world!</string>
+	<string name="cap">Cap : </string>
+    <string name="coord">Coordonnées : </string>
 </resources>

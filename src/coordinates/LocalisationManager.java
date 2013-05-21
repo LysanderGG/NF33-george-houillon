@@ -5,8 +5,9 @@ import java.lang.Math;
 
 import cap.CapDetector;
 import cap.CapListener;
-import com.example.nf33.IStepListener;
-import com.example.nf33.MainActivity;
+import steps.IStepListener;
+import steps.StepActivity;
+import steps.StepDetector;
 
 public class LocalisationManager{
 	public class Position{
@@ -29,19 +30,18 @@ public class LocalisationManager{
 	
 	CapDetector capDetector;
 	
-	//TODO Changer d'objet pour que ce soit plus propre
-	MainActivity stepDetector;
+	StepDetector stepDetector;
 	
-	public LocalisationManager(){
+	public LocalisationManager(StepActivity ativity){
 		Position first = new Position(0,0,0);
 		positions.add(first);
 		
 		localisationListener = null;
 		
 		capDetector = new CapDetector();
-		stepDetector = new MainActivity();
+		stepDetector = new StepDetector(ativity);
 		
-		//On récupère les nouveaux cap en non stop
+		//On rï¿½cupï¿½re les nouveaux cap en non stop
 		capDetector.setHasChangedListener(new CapListener(){
 			@Override
 			public void hasChanged(float capn, float pitch, float roll){
@@ -49,7 +49,7 @@ public class LocalisationManager{
 			}
 		});
 		
-		//dès qu'on détecte un pas, on prend le dernier cap relevé et on l'envoie
+		//dï¿½s qu'on dï¿½tecte un pas, on prend le dernier cap relevï¿½ et on l'envoie
 		//TODO Voir si on peut pas faire mieux
 		stepDetector.setStepListener(new IStepListener(){
 			@Override
@@ -67,7 +67,7 @@ public class LocalisationManager{
 		//calculer la nouvelle position ac le cap
 		float newPosition[] = {0,0,0};
 		
-		//ahah vive les maths, je sais plus comment on fait ça
+		//ahah vive les maths, je sais plus comment on fait ï¿½a
 		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(cap);
 		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(cap);
 		
@@ -75,7 +75,7 @@ public class LocalisationManager{
 		oldPosition = currentPosition;
 		currentPosition = newPosition;
 		
-		//déclencher le listener pour dire qu'il y a une nouvelle position
+		//dï¿½clencher le listener pour dire qu'il y a une nouvelle position
 		localisationListener.onNewPosition(oldPosition, currentPosition);
 
 		positions.add(new Position(newPosition[0],newPosition[1],0));
