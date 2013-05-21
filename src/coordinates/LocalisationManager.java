@@ -1,6 +1,7 @@
 package coordinates;
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 import cap.CapDetector;
 import cap.CapListener;
@@ -65,16 +66,19 @@ public class LocalisationManager{
 	private void computeNewPosition(float _stepLength, float cap){
 		//calculer la nouvelle position ac le cap
 		float newPosition[] = {0,0,0};
-		float x=0, y=0, z=0;
 		
 		//ahah vive les maths, je sais plus comment on fait ça
-		
-		//déclencher le listener pour dire qu'il y a une nouvelle position
-		localisationListener.onNewPosition(oldPosition, newPosition);
+		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(cap);
+		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(cap);
 		
 		//M-a-J des variables
+		oldPosition = currentPosition;
 		currentPosition = newPosition;
-		positions.add(new Position(x,y,z));
+		
+		//déclencher le listener pour dire qu'il y a une nouvelle position
+		localisationListener.onNewPosition(oldPosition, currentPosition);
+
+		positions.add(new Position(newPosition[0],newPosition[1],0));
 	}
 	
 	public void setLocalisationListener(LocalisationListener listener){

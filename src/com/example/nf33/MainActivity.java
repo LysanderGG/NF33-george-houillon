@@ -13,6 +13,8 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.nf33.MyLogs.LogItem;
@@ -63,24 +65,18 @@ public class MainActivity extends Activity {
 
 	private int state = STATE_CAPTURING;
 
+	
+	private static final float NEGATIVE_DEFAULT_LIMIT_MULTI_AXIS 	= -1.00f;
+	private static final float POSITIVE_DEFAULT_LIMIT_MULTI_AXIS 	= +1.00f;
+	private static final float AMPLITUDE_DEFAULT_MINIMUM_MULTI_AXIS = +2.00f;
 
-	private static final float NEGATIVE_LIMIT_MULTI_AXIS 	= -1.25f;
-	private static final float POSITIVE_LIMIT_MULTI_AXIS 	= +1.25f;
-	private static final float AMPLITUDE_MINIMUM_MULTI_AXIS = 3.0f;
-
-	private static final float NEGATIVE_LIMIT_1_AXIS 		= -1.25f;
-	private static final float POSITIVE_LIMIT_1_AXIS 		= +1.25f;
-	private static final float AMPLITUDE_MINIMUM_1_AXIS 	= 3.0f;
-
-	// Le nombre d'échantillons à observer pour déterminer l'axe principal
-	// sur lequel le téléphone est utilisé.
-	private final int N_HISTORY_LOOK_BACK = 10;
-
-	/*
-	 * Prépare l'activité au démarrage de l'enregistrement en branchant
-	 * les différents widgets.
-	 */
-
+	private static final float NEGATIVE_DEFAULT_LIMIT_1_AXIS 		= -1.00f;
+	private static final float POSITIVE_DEFAULT_LIMIT_1_AXIS 		= +1.00f;
+	private static final float AMPLITUDE_DEFAULT_MINIMUM_1_AXIS 	= +2.00f;
+	
+	private float limitSensibility 		= 1.0f;
+	private float amplitudeSensibility 	= 1.0f;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +144,33 @@ public class MainActivity extends Activity {
 				resetAll();
 			}
 		});
+		// SeekBars delegates implementation
+		((SeekBar)(findViewById(R.id.seekBarLimit))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				limitSensibility = 1 + (progress + 1) / (seekBar.getMax() + 1);
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+		});
+		
+		((SeekBar)(findViewById(R.id.seekBarAmplitude))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				amplitudeSensibility = 1.0f + (float)(progress + 1) / (float)(seekBar.getMax() + 1);
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+		});
+		
 		// Démarre l'activité de capture
 		toggleActivity(true);
 	}
@@ -354,7 +377,7 @@ public class MainActivity extends Activity {
 	 */
 
 	private float getAmplitudeMinimum() {
-		return (m_bMultiAxis) ? AMPLITUDE_MINIMUM_MULTI_AXIS : AMPLITUDE_MINIMUM_1_AXIS;
+		return ((m_bMultiAxis) ? AMPLITUDE_DEFAULT_MINIMUM_MULTI_AXIS : AMPLITUDE_DEFAULT_MINIMUM_1_AXIS) * amplitudeSensibility;
 	}
 
 	/*
@@ -363,7 +386,7 @@ public class MainActivity extends Activity {
 	 */
 
 	private float getNegativeLimit() {
-		return (m_bMultiAxis) ? NEGATIVE_LIMIT_MULTI_AXIS : NEGATIVE_LIMIT_1_AXIS;
+		return ((m_bMultiAxis) ? NEGATIVE_DEFAULT_LIMIT_MULTI_AXIS : NEGATIVE_DEFAULT_LIMIT_1_AXIS) * limitSensibility;
 	}
 
 	/*
@@ -372,7 +395,7 @@ public class MainActivity extends Activity {
 	 */
 
 	private float getPositiveLimit() {
-		return (m_bMultiAxis) ? POSITIVE_LIMIT_MULTI_AXIS : POSITIVE_LIMIT_1_AXIS;
+		return ((m_bMultiAxis) ? POSITIVE_DEFAULT_LIMIT_MULTI_AXIS : POSITIVE_DEFAULT_LIMIT_1_AXIS) * limitSensibility;
 	}
 
 	/*
