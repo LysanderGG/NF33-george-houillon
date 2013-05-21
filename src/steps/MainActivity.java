@@ -1,14 +1,7 @@
 package steps;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import steps.MyLogs.LogItem;
-
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
@@ -41,7 +34,6 @@ public class MainActivity extends StepActivity {
 	// seconds
 	private static final int 	COUNTDOWN_DURATION 		= 5;
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

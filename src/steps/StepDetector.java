@@ -7,15 +7,6 @@ import steps.MyLogs.LogItem;
 
 import android.content.Context;
 import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Vibrator;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 
 public class StepDetector {
 	private int				m_iStepsCounter	= 0;
@@ -293,7 +284,7 @@ public class StepDetector {
 	/*
 	 * Remet à zéro toute la mémoire de l'application.
 	 */
-	private void resetAll() {
+	public void resetAll() {
 		resetStepsCounter();
 		resetHistory();
 	}
