@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.os.Environment;
@@ -16,7 +17,7 @@ import android.util.Log;
  * Enregistre les mesures successives du senseur.
  */
 
-@SuppressLint("DefaultLocale")
+@SuppressLint({ "DefaultLocale", "SimpleDateFormat" })
 public class MyLogs {
 
 	/*
@@ -140,7 +141,7 @@ public class MyLogs {
 
             // Création du fichier
             if (_useDateInName) {
-            	DateFormat dateFormat = new SimpleDateFormat(_filename);
+            	SimpleDateFormat dateFormat = new SimpleDateFormat(_filename);
         		Date date = new Date();
         		_filename = dateFormat.format(date);
             }
