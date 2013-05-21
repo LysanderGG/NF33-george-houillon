@@ -8,9 +8,55 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CoordinateActivity" >
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/TextViewCap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cap" />
+
+        <TextView
+            android:id="@+id/TextViewPas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/steps_number" />
+
+        <TextView
+            android:id="@+id/textViewCoord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/coord" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/TextViewCapValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_tv_steps_counter" />
+
+        <TextView
+            android:id="@+id/TextViewPasValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_tv_steps_counter" />
+
+        <TextView
+            android:id="@+id/TextViewCoordValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_tv_steps_counter" />
+    </LinearLayout>
 
 </RelativeLayout>

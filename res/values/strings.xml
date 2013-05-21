@@ -17,4 +17,7 @@
     <string name="hello_world">Hello world!</string>
 	<string name="limit">Limit</string>
 	<string name="amplitude">Amplitude</string>
+	
+	<string name="cap">Cap : </string>
+	<string name="coord">Coordonnées : </string>
 </resources>
