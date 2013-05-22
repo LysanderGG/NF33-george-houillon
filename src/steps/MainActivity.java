@@ -31,7 +31,7 @@ public class MainActivity extends StepActivity {
 	private static final String LOG_DIRNAME		= "NF33-data";
 	private static final String TAG 			= "NF33-data";
 
-	// seconds
+	// En secondes
 	private static final int 	COUNTDOWN_DURATION 		= 5;
 
 	
@@ -69,12 +69,12 @@ public class MainActivity extends StepActivity {
 		findViewById(R.id.button_reset).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Pause the activity
+				// Mise en pause
 				resetAll();
 				m_stepDetector.toggleActivity(false);
 				m_tvStepsCounter.setText(String.valueOf(COUNTDOWN_DURATION));
 				m_tvStepsCounter.setTextColor(Color.rgb(0, 175, 45));
-				// Wait few seconds and restart the activity
+				// Attente de quelques secondes avant le redemarrage de l'activite
 				new CountDownTimer(COUNTDOWN_DURATION*1000, 500) {
 				     @Override
 					public void onTick(long millisUntilFinished) {
@@ -85,7 +85,7 @@ public class MainActivity extends StepActivity {
 				    	 m_tvStepsCounter.setText("0");
 				    	 m_tvStepsCounter.setTextColor(Color.BLACK);
 				    	 m_stepDetector.toggleActivity(true);
-				    	 // Vibrate for 300 milliseconds
+				    	 // Declenchement du vibreur pour avertir l'utilisateur
 				    	 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 				    	 v.vibrate(300);
 				     }
@@ -101,7 +101,7 @@ public class MainActivity extends StepActivity {
 			}
 		});
 		
-		// SeekBars delegates implementation
+		// Implementation des delegates de SeekBars 
 		((SeekBar)(findViewById(R.id.seekBarLimit))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -136,7 +136,7 @@ public class MainActivity extends StepActivity {
 
 	
 	/*
-	 * Reset methods
+	 * Methodes de reset
 	 */
 
 	private void resetStepsCounter() {
@@ -155,7 +155,7 @@ public class MainActivity extends StepActivity {
 
 	
 	/*
-	 * Surcharge des méthodes de StepActivity
+	 * Surcharge des methodes de StepActivity
 	 */
 	
 	@Override

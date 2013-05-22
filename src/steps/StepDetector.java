@@ -54,12 +54,11 @@ public class StepDetector {
 	public StepDetector(StepActivity activity) {
 		m_parentActivity = activity;
 		
-		m_sensor = new Sensor(this);
+		m_sensor 		= new Sensor(this);
 		m_sensorManager = (SensorManager)m_parentActivity.getSystemService(Context.SENSOR_SERVICE);
 
-		m_history = new MyLogs(HISTORY_MAX_LENGTH);
-
-		m_stateHistory = new ArrayList<Integer>(3);
+		m_history 		= new MyLogs(HISTORY_MAX_LENGTH);
+		m_stateHistory 	= new ArrayList<Integer>(3);
 	}
 
 	/*
@@ -96,7 +95,7 @@ public class StepDetector {
 	
 	
 	/*
-	 * Suspend or resume the activity (sensor capturing, logging, screen update)
+	 * Mets en pause ou reprend l'activite (capture des senseurs, log, mise à jour de l'ecran)
 	 */
 	void toggleActivity(boolean on) {
 		m_sensor.toggleActivity(on);
