@@ -9,7 +9,6 @@ import android.content.Context;
 import android.hardware.SensorManager;
 
 public class StepDetector {
-	private int				m_iStepsCounter	= 0;
 	private float			m_fLastMax		= 0.0f;
 	private float			m_fLastMin		= 0.0f;
 	private boolean			m_bMultiAxis	= false;
@@ -59,6 +58,8 @@ public class StepDetector {
 
 		m_history 		= new MyLogs(HISTORY_MAX_LENGTH);
 		m_stateHistory 	= new ArrayList<Integer>(3);
+		
+		m_stepListenerList = new ArrayList<IStepListener>();
 	}
 
 	/*
@@ -256,9 +257,6 @@ public class StepDetector {
 	 */
 
 	private void stepDetected() {
-		++m_iStepsCounter;
-		m_parentActivity.setStepsCounter(m_iStepsCounter);
-		
 		// Ajoute la detection de pas a l'historique
 		m_history.addStepDetected();
 		// Appel de stepDetected sur chaque listener
@@ -267,13 +265,6 @@ public class StepDetector {
 		}
 	}
 	
-	/*
-	 * Remet à zéro le compteur de pas.
-	 */
-	public void resetStepsCounter() {
-		m_iStepsCounter = 0;
-	}
-
 	/*
 	 * Remet à zéro l'historique de l'application.
 	 */
@@ -285,7 +276,6 @@ public class StepDetector {
 	 * Remet à zéro toute la mémoire de l'application.
 	 */
 	public void resetAll() {
-		resetStepsCounter();
 		resetHistory();
 	}
 

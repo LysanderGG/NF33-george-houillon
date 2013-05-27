@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.example.nf33.R;
 
-public class MainActivity extends StepActivity {
+public class MainActivity extends StepActivity implements IStepListener {
 
+	private int				m_iStepsCounter	= 0;
+	
 	private TextView 		m_tvLogs,
 	                 		m_tvLogButton,
 	                 		m_tvStepsCounter,
@@ -32,7 +34,7 @@ public class MainActivity extends StepActivity {
 	private static final String TAG 			= "NF33-data";
 
 	// En secondes
-	private static final int 	COUNTDOWN_DURATION 		= 5;
+	private static final int 	COUNTDOWN_DURATION 	= 5;
 
 	
 	@Override
@@ -50,7 +52,7 @@ public class MainActivity extends StepActivity {
 		m_progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
 		m_stepDetector = new StepDetector(this);
-
+		m_stepDetector.addStepListener(this);
 
 		// Implementation des delegates des bouttons
 		findViewById(R.id.button_log).setOnClickListener(new OnClickListener() {
@@ -140,7 +142,7 @@ public class MainActivity extends StepActivity {
 	 */
 
 	private void resetStepsCounter() {
-		m_stepDetector.resetStepsCounter();
+		m_iStepsCounter = 0;
 		m_tvStepsCounter.setText("0");
 	}
 
@@ -186,6 +188,12 @@ public class MainActivity extends StepActivity {
 	@Override
 	public void setStepsCounter(int _value) {
 		m_tvStepsCounter.setText(String.valueOf(_value));
+	}
+
+
+	@Override
+	public void stepDetected(float _stepLength) {
+		setStepsCounter(++m_iStepsCounter);
 	}
 	
 	
