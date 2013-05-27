@@ -73,7 +73,6 @@ public class MainActivity extends StepActivity implements IStepListener {
 			public void onClick(View v) {
 				// Mise en pause
 				m_stepDetector.toggleActivity(false);
-				resetAll();
 				m_tvStepsCounter.setText(String.valueOf(COUNTDOWN_DURATION));
 				m_tvStepsCounter.setTextColor(Color.rgb(0, 175, 45));
 				// Attente de quelques secondes avant le redemarrage de l'activite
@@ -86,6 +85,7 @@ public class MainActivity extends StepActivity implements IStepListener {
 					public void onFinish() {
 				    	 m_tvStepsCounter.setText("0");
 				    	 m_tvStepsCounter.setTextColor(Color.BLACK);
+				    	 resetAll();
 				    	 m_stepDetector.toggleActivity(true);
 				    	 // Declenchement du vibreur pour avertir l'utilisateur
 				    	 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
