@@ -47,13 +47,15 @@ public class StepDetector {
 	private static final float NEGATIVE_DEFAULT_LIMIT_1_AXIS 		= -1.00f;
 	private static final float POSITIVE_DEFAULT_LIMIT_1_AXIS 		= +1.00f;
 	private static final float AMPLITUDE_DEFAULT_MINIMUM_1_AXIS 	= +2.00f;
-	
+
 	private float m_fLimitSensibility 		= 1.0f;
 	private float m_fAmplitudeSensibility 	= 1.0f;
-	
+
+	private long m_iCaptureStartTime = -1;
+
 	public StepDetector(StepActivity activity) {
 		m_parentActivity = activity;
-		
+
 		m_sensor 		= new Sensor(this);
 		m_sensorManager = (SensorManager)m_parentActivity.getSystemService(Context.SENSOR_SERVICE);
 
@@ -67,48 +69,46 @@ public class StepDetector {
 	public SensorManager getSensorManager() {
 		return m_sensorManager;
 	}
-	
+
 	public MyLogs getHistory() {
 		return m_history;
 	}
-	
+
 	public boolean getIsMultiAxis() {
 		return m_bMultiAxis;
 	}
 	public void setIsMultiAxis(boolean _b) {
 		m_bMultiAxis = _b;
 	}
-	
+
 	public float getLimitSensibility() {
 		return m_fLimitSensibility;
 	}
 	public void setLimitSensibility(float _f) {
 		m_fLimitSensibility = _f;
 	}
-	
+
 	public float getAmplitudeSensibility() {
 		return m_fAmplitudeSensibility;
 	}
 	public void setAmplitudeSensibility(float _f) {
 		m_fAmplitudeSensibility = _f;
 	}
-	
-	
+
+
 	/*
 	 * Mets en pause ou reprend l'activite (capture des senseurs, log, mise à jour de l'ecran)
 	 */
 	void toggleActivity(boolean on) {
 		m_sensor.toggleActivity(on);
 	}
-	
-	void handleMeasure(float _x, float _y, float _z)
-	{
-		m_history.add(
-			Calendar.getInstance().getTimeInMillis(),
-			_x,
-			_y,
-			_z
-		);
+
+	void handleMeasure(float _x, float _y, float _z) {
+		long now = Calendar.getInstance().getTimeInMillis();
+
+		if (m_iCaptureStartTime == -1) {
+			m_iCaptureStartTime = now;
+		}
 
 		float norm;
 
@@ -123,40 +123,53 @@ public class StepDetector {
 
 			float n = Math.min(history.size(), N_HISTORY_LOOK_BACK);
 
-			for (int i = 0; i < n; ++i) {
-				float x = history.get(i).getX();
-				float y = history.get(i).getY();
-				float z = history.get(i).getZ();
-				float normInst = (float)Math.sqrt(
-					x * x +
-					y * y +
-					z * z
+			boolean useXAxis = false,
+					useYAxis = false,
+					useZAxis = false;
+
+			if (n > 0) {
+				for (int i = 0; i < n; ++i) {
+					float x = history.get(i).getX();
+					float y = history.get(i).getY();
+					float z = history.get(i).getZ();
+					float normInst = (float)Math.sqrt(
+						x * x +
+						y * y +
+						z * z
+					);
+					normX += Math.abs(Math.abs(x) - normInst);
+					normY += Math.abs(Math.abs(y) - normInst);
+					normZ += Math.abs(Math.abs(z) - normInst);
+				}
+				normX /= n;
+				normY /= n;
+				normZ /= n;
+				float minNorm = Math.min(
+					Math.min(normX, normY),
+					normZ
 				);
-				normX += Math.abs(Math.abs(x) - normInst);
-				normY += Math.abs(Math.abs(y) - normInst);
-				normZ += Math.abs(Math.abs(z) - normInst);
+				if (minNorm == normX) {
+					useXAxis = true;
+				} else if(minNorm == normY) {
+					useYAxis = true;
+				} else {
+					useZAxis = true;
+				}
+			} else {
+				// utilise l'axe Z par défaut
+				useZAxis = true;
 			}
-
-			normX /= n;
-			normY /= n;
-			normZ /= n;
-
-			float minNorm = Math.min(
-				Math.min(normX, normY),
-				normZ
-			);
-
-			if (minNorm == normX) {
+			if (useXAxis) {
 				norm = Math.abs(_x);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_X);
-			} else if(minNorm == normY) {
+			} else if (useYAxis) {
 				norm = Math.abs(_y);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Y);
-			} else {
+			} else if (useZAxis) {
 				norm = Math.abs(_z);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Z);
 			}
-		} 
+		}
 		// Mode multi-axe: détecte le pas sur la norme tridimentionnelle
 		else {
 			norm = (float)Math.sqrt(
@@ -214,12 +227,20 @@ public class StepDetector {
 				// Réinitialise la machine à états
 				m_fLastMax = 0f;
 				m_fLastMin = 0f;
+				m_iCaptureStartTime = -1;
 				setState(STATE_CAPTURING);
 			}
 			break;
 		}
+
+		m_history.add(
+				now,
+				_x,
+				_y,
+				_z
+			);
 	}
-	
+
 	/*
 	 * Change d'état en maintenant une liste des 3 derniers états
 	 */
@@ -258,14 +279,27 @@ public class StepDetector {
 	private void stepDetected() {
 		++m_iStepsCounter;
 		m_parentActivity.setStepsCounter(m_iStepsCounter);
-		
+
 		// Add step detection in history
 		m_history.addStepDetected();
 		if (m_stepListener != null) {
-			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
+			float stepLength = computeStepLength();
+			m_stepListener.stepDetected(stepLength);
 		}
 	}
-	
+
+	/*
+	 * Calcule la taille du pas courant.
+	 * Cette méthode n'est sensée être appellée qu'avant une transition
+	 * de l'état final (pas détecté) vers l'état initial (phase de capture).
+	 */
+
+	private float computeStepLength() {
+		long stepDuration = Calendar.getInstance().getTimeInMillis() - m_iCaptureStartTime;
+		// L = 45% de la taille de la personne + 0.3 * vitesse de marche
+		return CONSTANT_STEP_LENGTH;
+	}
+
 	/*
 	 * Remet à zéro le compteur de pas.
 	 */
