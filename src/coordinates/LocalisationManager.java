@@ -42,7 +42,7 @@ public class LocalisationManager{
 		stepDetector = new StepDetector(ativity);
 		
 		//On r�cup�re les nouveaux cap en non stop
-		capDetector.setHasChangedListener(new CapListener(){
+		capDetector.addHasChangedListener(new CapListener(){
 			@Override
 			public void hasChanged(float capn, float pitch, float roll){
 				cap = capn;
