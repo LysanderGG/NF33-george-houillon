@@ -44,6 +44,11 @@ public class MapView extends View{
 		
 		currentPoint[0] = x;
 		currentPoint[0] = y;
+		
+		canvas.save();
+		paint.setColor(Color.RED);
+		canvas.drawPoint(x, y, paint);
+		canvas.restore();
 	}
 	
 	private void redraw(){
