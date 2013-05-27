@@ -29,7 +29,7 @@ public class MainActivity extends StepActivity implements IStepListener {
 
 	private StepDetector	m_stepDetector;
 
-	private static final String LOG_FILENAME	= "NF33 dd-MM-yyyy HH:mm:ss.csv";
+	private static final String LOG_FILENAME	= "'NF33'-dd-MM-yyyy-HH-mm-ss'.csv'";
 	private static final String LOG_DIRNAME		= "NF33-data";
 	private static final String TAG 			= "NF33-data";
 
