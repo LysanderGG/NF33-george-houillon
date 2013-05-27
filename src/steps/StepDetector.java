@@ -165,7 +165,7 @@ public class StepDetector {
 			} else if (useYAxis) {
 				norm = Math.abs(_y);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Y);
-			} else if (useZAxis) {
+			} else {
 				norm = Math.abs(_z);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Z);
 			}
