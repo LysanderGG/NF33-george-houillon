@@ -108,7 +108,7 @@ public class StepDetector {
 		toggleActivity(false);
 	}
 	
-	private void handleMeasure(float _x, float _y, float _z)
+	public void handleMeasure(float _x, float _y, float _z)
 	{
 		m_history.add(
 			Calendar.getInstance().getTimeInMillis(),

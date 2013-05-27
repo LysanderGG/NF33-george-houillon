@@ -72,8 +72,8 @@ public class MainActivity extends StepActivity implements IStepListener {
 			@Override
 			public void onClick(View v) {
 				// Mise en pause
-				resetAll();
 				m_stepDetector.toggleActivity(false);
+				resetAll();
 				m_tvStepsCounter.setText(String.valueOf(COUNTDOWN_DURATION));
 				m_tvStepsCounter.setTextColor(Color.rgb(0, 175, 45));
 				// Attente de quelques secondes avant le redemarrage de l'activite
