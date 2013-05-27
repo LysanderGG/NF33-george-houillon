@@ -27,12 +27,14 @@ public class MyLogs {
 	public class LogItem {
 		private final float[] 	m_coords;
 		private final long 		m_lTime;
-		private boolean 		m_bIsStepDetected;
+		private final boolean	m_bIsStepDetected;
+		private final float		m_amplitude;
 
-		public LogItem(float[] _coords, boolean _isStepDetected, long _time) {
+		public LogItem(float[] _coords, boolean _isStepDetected, float _amplitude, long _time) {
 			m_coords 			= _coords;
 			m_bIsStepDetected	= _isStepDetected;
 			m_lTime 			= _time;
+			m_amplitude         = _amplitude;
 		}
 
 		public float[] getCoords() {
@@ -55,19 +57,19 @@ public class MyLogs {
 			return m_bIsStepDetected;
 		}
 
-		public long getTime() {
-			return m_lTime;
+		public float getAmplitude() {
+			return m_amplitude;
 		}
 
-		public void setIsStepDetected(boolean _value) {
-			m_bIsStepDetected = _value;
+		public long getTime() {
+			return m_lTime;
 		}
 	}
 
 	private final int					m_iLength;
 	private final ArrayList<LogItem>	m_list;
 
-	private static final String CSV_HEAD = "timestamp;X;Y;Z;StepDetected\n";
+	private static final String CSV_HEAD = "timestamp;X;Y;Z;step detected;amplitude\n";
 
 	public ArrayList<LogItem> getList() {
 		return m_list;
@@ -79,24 +81,16 @@ public class MyLogs {
 	}
 
 	/*
-	 * Ajoute un enregistrement à l'historique.
-	 */
-
-	public void add(long _time, float _x, float _y, float _z) {
-		add(_time, _x, _y, _z, false);
-	}
-
-	/*
 	 * Ajoute un enregistrement spécifiant ou non un pas à l'historique.
 	 * Instancie un élément de type /LogItem/.
 	 */
 
-	public void add(long _time, float _x, float _y, float _z, boolean _isStepDetected) {
+	public void add(long _time, float _x, float _y, float _z, boolean _isStepDetected, float _amplitude) {
 		if (m_iLength > 0 && m_list.size() >= m_iLength) {
 			// Rotation de l'historique
 			m_list.remove(m_list.size()-1);
 		}
-		m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _isStepDetected, _time));
+		m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _isStepDetected, _amplitude, _time));
 	}
 
 	/*
@@ -173,12 +167,13 @@ public class MyLogs {
 			buf.append(CSV_HEAD);
 			for (LogItem li : m_list) {
 				txt = String.format(
-					"%d;%f;%f;%f;%d\n",
+					"%d;%f;%f;%f;%s;%f\n",
 					li.m_lTime - lastTimestamp,
 					li.m_coords[0],
 					li.m_coords[1],
 					li.m_coords[2],
-					(li.m_bIsStepDetected) ? 1 : 0
+					li.m_bIsStepDetected ? "1" : "",
+					li.m_amplitude
 				);
 				buf.append(txt);
 			}
@@ -198,13 +193,5 @@ public class MyLogs {
 
 	public void clear() {
 		m_list.clear();
-	}
-
-	/*
-	 * Marque le dernier échantillon comme celui qui achève un pas.
-	 */
-
-	public void addStepDetected() {
-		m_list.get(0).setIsStepDetected(true);
 	}
 }

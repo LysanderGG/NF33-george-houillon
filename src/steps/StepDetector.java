@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import steps.MyLogs.LogItem;
-
 import android.content.Context;
 import android.hardware.SensorManager;
 
@@ -37,8 +36,8 @@ public class StepDetector {
 	private static final int STATE_CAPTURING  = 2;
 
 	private int state = STATE_CAPTURING;
+	private long m_iCaptureStartTime = -1;
 
-	
 	private static final float NEGATIVE_DEFAULT_LIMIT_MULTI_AXIS 	= -1.00f;
 	private static final float POSITIVE_DEFAULT_LIMIT_MULTI_AXIS 	= +1.00f;
 	private static final float AMPLITUDE_DEFAULT_MINIMUM_MULTI_AXIS = +2.00f;
@@ -80,7 +79,7 @@ public class StepDetector {
 		} else {
 			m_fAmplitudeSensibility = _amplitudeSensibility;
 		}
-		
+
 		m_sensor 		= new Sensor(this);
 		m_sensorManager = (SensorManager)m_parentActivity.getSystemService(Context.SENSOR_SERVICE);
 
@@ -100,33 +99,33 @@ public class StepDetector {
 	public SensorManager getSensorManager() {
 		return m_sensorManager;
 	}
-	
+
 	public MyLogs getHistory() {
 		return m_history;
 	}
-	
+
 	public boolean getIsMultiAxis() {
 		return m_bMultiAxis;
 	}
 	public void setIsMultiAxis(boolean _b) {
 		m_bMultiAxis = _b;
 	}
-	
+
 	public float getLimitSensibility() {
 		return m_fLimitSensibility;
 	}
 	public void setLimitSensibility(float _f) {
 		m_fLimitSensibility = _f;
 	}
-	
+
 	public float getAmplitudeSensibility() {
 		return m_fAmplitudeSensibility;
 	}
 	public void setAmplitudeSensibility(float _f) {
 		m_fAmplitudeSensibility = _f;
 	}
-	
-	
+
+
 	/*
 	 * Mets en pause ou reprend l'activite (capture des senseurs, log, mise à jour de l'ecran)
 	 */
@@ -139,15 +138,13 @@ public class StepDetector {
 	public void unregisterSensors() {
 		toggleActivity(false);
 	}
-	
-	public void handleMeasure(float _x, float _y, float _z)
-	{
-		m_history.add(
-			Calendar.getInstance().getTimeInMillis(),
-			_x,
-			_y,
-			_z
-		);
+
+	void handleMeasure(float _x, float _y, float _z) {
+		long now = Calendar.getInstance().getTimeInMillis();
+
+		if (m_iCaptureStartTime == -1) {
+			m_iCaptureStartTime = now;
+		}
 
 		float norm;
 
@@ -162,40 +159,53 @@ public class StepDetector {
 
 			float n = Math.min(history.size(), N_HISTORY_LOOK_BACK);
 
-			for (int i = 0; i < n; ++i) {
-				float x = history.get(i).getX();
-				float y = history.get(i).getY();
-				float z = history.get(i).getZ();
-				float normInst = (float)Math.sqrt(
-					x * x +
-					y * y +
-					z * z
+			boolean useXAxis = false,
+					useYAxis = false,
+					useZAxis = false;
+
+			if (n > 0) {
+				for (int i = 0; i < n; ++i) {
+					float x = history.get(i).getX();
+					float y = history.get(i).getY();
+					float z = history.get(i).getZ();
+					float normInst = (float)Math.sqrt(
+						x * x +
+						y * y +
+						z * z
+					);
+					normX += Math.abs(Math.abs(x) - normInst);
+					normY += Math.abs(Math.abs(y) - normInst);
+					normZ += Math.abs(Math.abs(z) - normInst);
+				}
+				normX /= n;
+				normY /= n;
+				normZ /= n;
+				float minNorm = Math.min(
+					Math.min(normX, normY),
+					normZ
 				);
-				normX += Math.abs(Math.abs(x) - normInst);
-				normY += Math.abs(Math.abs(y) - normInst);
-				normZ += Math.abs(Math.abs(z) - normInst);
+				if (minNorm == normX) {
+					useXAxis = true;
+				} else if(minNorm == normY) {
+					useYAxis = true;
+				} else {
+					useZAxis = true;
+				}
+			} else {
+				// utilise l'axe Z par défaut
+				useZAxis = true;
 			}
-
-			normX /= n;
-			normY /= n;
-			normZ /= n;
-
-			float minNorm = Math.min(
-				Math.min(normX, normY),
-				normZ
-			);
-
-			if (minNorm == normX) {
+			if (useXAxis) {
 				norm = Math.abs(_x);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_X);
-			} else if(minNorm == normY) {
+			} else if (useYAxis) {
 				norm = Math.abs(_y);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Y);
 			} else {
 				norm = Math.abs(_z);
 				m_parentActivity.setMajorAxis(StepActivity.AXIS_Z);
 			}
-		} 
+		}
 		// Mode multi-axe: détecte le pas sur la norme tridimentionnelle
 		else {
 			norm = (float)Math.sqrt(
@@ -217,6 +227,9 @@ public class StepDetector {
 
 		// Déduit la gravité de la norme
 		norm -= Sensor.G;
+
+		boolean stepDetected = false;
+		float amplitude = 0f;
 
 		switch (state) {
 		// Cherche simultanement un minimum et un maximum local.
@@ -247,18 +260,30 @@ public class StepDetector {
 			}
 			// Cherche une intersection avec l'origine
 			if (norm > 0) {
-				if (amplitudeCheck() && sequenceCheck()) {
+				amplitude = getStepAmplitude();
+				if (amplitudeCheck(amplitude) && sequenceCheck()) {
+					stepDetected = true;
 					stepDetected();
 				}
 				// Réinitialise la machine à états
 				m_fLastMax = 0f;
 				m_fLastMin = 0f;
+				m_iCaptureStartTime = -1;
 				setState(STATE_CAPTURING);
 			}
 			break;
 		}
+
+		m_history.add(
+			now,
+			_x,
+			_y,
+			_z,
+			stepDetected,
+			amplitude
+		);
 	}
-	
+
 	/*
 	 * Change d'état en maintenant une liste des 3 derniers états
 	 */
@@ -276,8 +301,12 @@ public class StepDetector {
 	 * lors de la recherche des minimums et maximums locaux.
 	 */
 
-	private boolean amplitudeCheck() {
-		return m_fLastMax - m_fLastMin > getAmplitudeMinimum();
+	private float getStepAmplitude() {
+		return m_fLastMax - m_fLastMin;
+	}
+
+	private boolean amplitudeCheck(float amplitude) {
+		return amplitude > getAmplitudeMinimum();
 	}
 
 	/*
@@ -295,14 +324,27 @@ public class StepDetector {
 	 */
 
 	private void stepDetected() {
+        float stepLength = computeStepLength();
 		// Ajoute la detection de pas a l'historique
 		m_history.addStepDetected();
 		// Appel de stepDetected sur chaque listener
 		for(IStepListener _listener : m_stepListenerList) {
-			_listener.stepDetected(CONSTANT_STEP_LENGTH);
+			_listener.stepDetected(stepLength);
 		}
 	}
-	
+
+	/*
+	 * Calcule la taille du pas courant.
+	 * Cette méthode n'est sensée être appellée qu'avant une transition
+	 * de l'état final (pas détecté) vers l'état initial (phase de capture).
+	 */
+
+	private float computeStepLength() {
+		long stepDuration = Calendar.getInstance().getTimeInMillis() - m_iCaptureStartTime;
+		// L = 45% de la taille de la personne + 0.3 * vitesse de marche
+		return CONSTANT_STEP_LENGTH;
+	}
+
 	/*
 	 * Remet à zéro l'historique de l'application.
 	 */
