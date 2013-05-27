@@ -13,7 +13,7 @@ public class Sensor implements SensorListener {
 
 	float m_fX, m_fY, m_fZ;
 
-	boolean active = false;
+	boolean m_bIsActive = false;
 
 	// Moyenne expérimentale du bruit sur l'axe Z (téléphone à plat)
 	public static final float G = 10.131f;
@@ -36,12 +36,21 @@ public class Sensor implements SensorListener {
 	}
 
 	public void toggleActivity(boolean on) {
-		if (on && !active) {
-			m_stepDetector.getSensorManager().registerListener(this, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
-			active = true;
-		} else if (!on && active) {
-			m_stepDetector.getSensorManager().unregisterListener(this);
-			active = false;
+		if (on && !m_bIsActive) {
+			registerSensor();
+		} else if (!on && m_bIsActive) {
+			unregisterSensor();
 		}
 	}
+	
+	public void registerSensor() {
+		m_stepDetector.getSensorManager().registerListener(this, SensorManager.SENSOR_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);
+		m_bIsActive = true;
+	}
+	
+	public void unregisterSensor() {
+		m_stepDetector.getSensorManager().unregisterListener(this);
+		m_bIsActive = false;
+	}
+	
 }
