@@ -20,132 +20,132 @@ import android.util.Log;
 @SuppressLint({ "DefaultLocale", "SimpleDateFormat" })
 public class MyLogs {
 
-	/*
-	 * Un enregistrement des 3 axes à un instant donné.
-	 */
+    /*
+     * Un enregistrement des 3 axes à un instant donné.
+     */
 
-	public class LogItem {
-		private final float[] 	m_coords;
-		private final long 		m_lTime;
-		private final boolean	m_bIsStepDetected;
-		private final float		m_amplitude;
+    public class LogItem {
+        private final float[] m_coords;
+        private final long    m_lTime;
+        private final boolean m_bIsStepDetected;
+        private final float   m_amplitude;
 
-		public LogItem(float[] _coords, boolean _isStepDetected, float _amplitude, long _time) {
-			m_coords 			= _coords;
-			m_bIsStepDetected	= _isStepDetected;
-			m_lTime 			= _time;
-			m_amplitude         = _amplitude;
-		}
+        public LogItem(float[] _coords, boolean _isStepDetected, float _amplitude, long _time) {
+            m_coords          = _coords;
+            m_bIsStepDetected = _isStepDetected;
+            m_lTime           = _time;
+            m_amplitude       = _amplitude;
+        }
 
-		public float[] getCoords() {
-			return m_coords;
-		}
+        public float[] getCoords() {
+            return m_coords;
+        }
 
-		public float getX() {
-			return m_coords[0];
-		}
+        public float getX() {
+            return m_coords[0];
+        }
 
-		public float getY() {
-			return m_coords[1];
-		}
+        public float getY() {
+            return m_coords[1];
+        }
 
-		public float getZ() {
-			return m_coords[2];
-		}
+        public float getZ() {
+            return m_coords[2];
+        }
 
-		public boolean getIsStepDetected() {
-			return m_bIsStepDetected;
-		}
+        public boolean getIsStepDetected() {
+            return m_bIsStepDetected;
+        }
 
-		public float getAmplitude() {
-			return m_amplitude;
-		}
+        public float getAmplitude() {
+            return m_amplitude;
+        }
 
-		public long getTime() {
-			return m_lTime;
-		}
-	}
+        public long getTime() {
+            return m_lTime;
+        }
+    }
 
-	private final int					m_iLength;
-	private final ArrayList<LogItem>	m_list;
+    private final int                m_iLength;
+    private final ArrayList<LogItem> m_list;
 
-	private static final String CSV_HEAD = "timestamp;X;Y;Z;step detected;amplitude\n";
+    private static final String CSV_HEAD = "timestamp;X;Y;Z;step detected;amplitude\n";
 
-	public ArrayList<LogItem> getList() {
-		return m_list;
-	}
+    public ArrayList<LogItem> getList() {
+        return m_list;
+    }
 
-	public MyLogs(int _length) {
-		m_iLength 	= (_length > 0) ? _length : 0;
-		m_list 		= new ArrayList<LogItem>(m_iLength);
-	}
+    public MyLogs(int _length) {
+        m_iLength = (_length > 0) ? _length : 0;
+        m_list    = new ArrayList<LogItem>(m_iLength);
+    }
 
-	/*
-	 * Ajoute un enregistrement spécifiant ou non un pas à l'historique.
-	 * Instancie un élément de type /LogItem/.
-	 */
+    /*
+     * Ajoute un enregistrement spécifiant ou non un pas à l'historique.
+     * Instancie un élément de type /LogItem/.
+     */
 
-	public void add(long _time, float _x, float _y, float _z, boolean _isStepDetected, float _amplitude) {
-		if (m_iLength > 0 && m_list.size() >= m_iLength) {
-			// Rotation de l'historique
-			m_list.remove(m_list.size()-1);
-		}
-		m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _isStepDetected, _amplitude, _time));
-	}
+    public void add(long _time, float _x, float _y, float _z, boolean _isStepDetected, float _amplitude) {
+        if (m_iLength > 0 && m_list.size() >= m_iLength) {
+            // Rotation de l'historique
+            m_list.remove(m_list.size()-1);
+        }
+        m_list.add(0, new LogItem(new float[] {_x, _y, _z}, _isStepDetected, _amplitude, _time));
+    }
 
-	/*
-	 * Enregistre l'historique courante sous la forme d'un fichier texte CSV.
-	 * Chaque ligne indique un enregistrement, donnant:
-	 *  . l'instant de capture de l'échantillon (en millisecondes, relatives à
-	 *    l'instant début de l'enregistrement)
-	 *  . la valeur de l'accéléromètre selon X
-	 *  . la valeur de l'accéléromètre selon Y
-	 *  . la valeur de l'accéléromètre selon Z
-	 */
+    /*
+     * Enregistre l'historique courante sous la forme d'un fichier texte CSV.
+     * Chaque ligne indique un enregistrement, donnant:
+     *  . l'instant de capture de l'échantillon (en millisecondes, relatives à
+     *    l'instant début de l'enregistrement)
+     *  . la valeur de l'accéléromètre selon X
+     *  . la valeur de l'accéléromètre selon Y
+     *  . la valeur de l'accéléromètre selon Z
+     */
 
-	public boolean writeLogFile(String _tag, String _dirname, String _filename, boolean _useDateInName) {
+    public boolean writeLogFile(String _tag, String _dirname, String _filename, boolean _useDateInName) {
 
-		try {
-			// Vérifie que le périphérique de stockage est utilisable
-			boolean externalStorageAvailable = false;
-		    boolean externalStorageWriteable = false;
-		    String state = Environment.getExternalStorageState();
+        try {
+            // Vérifie que le périphérique de stockage est utilisable
+            boolean externalStorageAvailable = false;
+            boolean externalStorageWriteable = false;
+            String state = Environment.getExternalStorageState();
 
-		    if (Environment.MEDIA_MOUNTED.equals(state)) {
-		        // Lecture/écriture
-		        externalStorageAvailable = externalStorageWriteable = true;
-		    } else if(Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-		        // Lecture seule
-		        externalStorageAvailable = true;
-		        externalStorageWriteable = false;
-		    } else {
-		        // Ni lecture ni écriture
-		        externalStorageAvailable = externalStorageWriteable = false;
-		    }
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                // Lecture/écriture
+                externalStorageAvailable = externalStorageWriteable = true;
+            } else if(Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+                // Lecture seule
+                externalStorageAvailable = true;
+                externalStorageWriteable = false;
+            } else {
+                // Ni lecture ni écriture
+                externalStorageAvailable = externalStorageWriteable = false;
+            }
 
-			// Création des dossiers
+            // Création des dossiers
             File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
             File dir = new File (root, _dirname);
             if (!dir.exists()) {
-            	if (!dir.mkdirs()) {
-            		Log.i(_tag, "Unable to create " + dir.getAbsolutePath());
-            		return false;
-            	}
+                if (!dir.mkdirs()) {
+                    Log.i(_tag, "Unable to create " + dir.getAbsolutePath());
+                    return false;
+                }
             }
 
             // Création du fichier
             if (_useDateInName) {
-            	SimpleDateFormat dateFormat = new SimpleDateFormat(_filename);
-        		Date date = new Date();
-        		_filename = dateFormat.format(date);
+                SimpleDateFormat dateFormat = new SimpleDateFormat(_filename);
+                Date date = new Date();
+                _filename = dateFormat.format(date);
             }
             File file = new File(dir, _filename);
             if (!file.exists()) {
                try {
                    file.createNewFile();
                } catch (IOException e) {
-            	   Log.i(_tag, "Unable to create " + file.getAbsolutePath());
-            	   return false;
+                   Log.i(_tag, "Unable to create " + file.getAbsolutePath());
+                   return false;
                }
             }
 
@@ -155,7 +155,7 @@ public class MyLogs {
             BufferedWriter buf;
 
             try {
-            	buf = new BufferedWriter(new FileWriter(file, false));
+                buf = new BufferedWriter(new FileWriter(file, false));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Log.i(_tag, "File not found");
@@ -163,35 +163,35 @@ public class MyLogs {
             }
 
             // Génération des données texte
-			String txt;
-			buf.append(CSV_HEAD);
-			for (LogItem li : m_list) {
-				txt = String.format(
-					"%d;%f;%f;%f;%d;%f\n",
-					li.m_lTime - lastTimestamp,
-					li.m_coords[0],
-					li.m_coords[1],
-					li.m_coords[2],
-					li.m_bIsStepDetected ? 1 : 0,
-					li.m_amplitude
-				);
-				buf.append(txt);
-			}
+            String txt;
+            buf.append(CSV_HEAD);
+            for (LogItem li : m_list) {
+                txt = String.format(
+                    "%d;%f;%f;%f;%d;%f\n",
+                    li.m_lTime - lastTimestamp,
+                    li.m_coords[0],
+                    li.m_coords[1],
+                    li.m_coords[2],
+                    li.m_bIsStepDetected,
+                    li.m_amplitude
+                );
+                buf.append(txt);
+            }
             buf.newLine();
             buf.close();
         } catch (IOException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             Log.e(_tag, "File write failed: " + e.toString());
             return false;
         }
-		return true;
-	}
+        return true;
+    }
 
-	/*
-	 * Vide l'historique.
-	 */
+    /*
+     * Vide l'historique.
+     */
 
-	public void clear() {
-		m_list.clear();
-	}
+    public void clear() {
+        m_list.clear();
+    }
 }
