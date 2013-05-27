@@ -98,11 +98,17 @@ public class StepDetector {
 	/*
 	 * Mets en pause ou reprend l'activite (capture des senseurs, log, mise à jour de l'ecran)
 	 */
-	void toggleActivity(boolean on) {
+	public void toggleActivity(boolean on) {
 		m_sensor.toggleActivity(on);
 	}
+	public void registerSensors() {
+		toggleActivity(true);
+	}
+	public void unregisterSensors() {
+		toggleActivity(false);
+	}
 	
-	void handleMeasure(float _x, float _y, float _z)
+	private void handleMeasure(float _x, float _y, float _z)
 	{
 		m_history.add(
 			Calendar.getInstance().getTimeInMillis(),
