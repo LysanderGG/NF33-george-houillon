@@ -1,8 +1,5 @@
 package cap;
 
-import java.util.ArrayList;
-
-import steps.IStepListener;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,10 +17,10 @@ public class CapDetector implements SensorEventListener {
 	float[] resultMatrix=new float[9];
 	float[] values=new float[3];
 	
-	private ArrayList<CapListener>	capListenerList;
+	private CapListener capListener;
 	
 	public CapDetector() {
-		
+		capListener = null;
 	}
 
 	@Override
@@ -44,8 +41,7 @@ public class CapDetector implements SensorEventListener {
 		z = (float) Math.toDegrees(values[2]);
 		
 		//emit a changing
-		for(CapListener iCap : capListenerList)
-			iCap.hasChanged(x,y,z);
+		capListener.hasChanged(x,y,z);
 	}
 	
 	@Override
@@ -54,8 +50,8 @@ public class CapDetector implements SensorEventListener {
 	}
 	
 	//handle listener
-	public void addHasChangedListener(CapListener listener){
-		capListenerList.add(listener);
+	public void setHasChangedListener(CapListener listener){
+		capListener = listener;
 	}
 		
 	public float getCap(){
