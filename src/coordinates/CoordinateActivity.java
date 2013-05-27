@@ -49,7 +49,7 @@ public class CoordinateActivity extends StepActivity {
 		m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		
 		capDetector = new CapDetector();
-		capDetector.addHasChangedListener(new CapListener() {
+		capDetector.setHasChangedListener(new CapListener() {
 			@Override
 			public void hasChanged(float cap, float pitch, float roll) {
 				if(cap < 0)
