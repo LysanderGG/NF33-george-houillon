@@ -107,20 +107,20 @@ public class MyLogs {
 
 		try {
 			// Vérifie que le périphérique de stockage est utilisable
-			boolean mExternalStorageAvailable = false;
-		    boolean mExternalStorageWriteable = false;
+			boolean externalStorageAvailable = false;
+		    boolean externalStorageWriteable = false;
 		    String state = Environment.getExternalStorageState();
 
 		    if (Environment.MEDIA_MOUNTED.equals(state)) {
 		        // Lecture/écriture
-		        mExternalStorageAvailable = mExternalStorageWriteable = true;
+		        externalStorageAvailable = externalStorageWriteable = true;
 		    } else if(Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 		        // Lecture seule
-		        mExternalStorageAvailable = true;
-		        mExternalStorageWriteable = false;
+		        externalStorageAvailable = true;
+		        externalStorageWriteable = false;
 		    } else {
 		        // Ni lecture ni écriture
-		        mExternalStorageAvailable = mExternalStorageWriteable = false;
+		        externalStorageAvailable = externalStorageWriteable = false;
 		    }
 
 			// Création des dossiers
@@ -142,7 +142,7 @@ public class MyLogs {
             File file = new File(dir, _filename);
             if (!file.exists()) {
                try {
-                  file.createNewFile();
+                   file.createNewFile();
                } catch (IOException e) {
             	   Log.i(_tag, "Unable to create " + file.getAbsolutePath());
             	   return false;

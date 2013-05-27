@@ -8,18 +8,17 @@ import android.content.Context;
 import android.hardware.SensorManager;
 
 public class StepDetector {
-	private int				m_iStepsCounter	= 0;
 	private float			m_fLastMax		= 0.0f;
 	private float			m_fLastMin		= 0.0f;
 	private boolean			m_bMultiAxis	= false;
-
-	private final Sensor 			m_sensor;
-	private final SensorManager   m_sensorManager;
-	private final MyLogs 			m_history;
-	private final ArrayList<Integer> 	m_stateHistory;
-	private IStepListener		m_stepListener;
-	private final StepActivity 	m_parentActivity;
-
+	
+	private Sensor 			m_sensor;
+	private SensorManager   m_sensorManager;
+	private MyLogs 			m_history;
+	private ArrayList<Integer> 			m_stateHistory;
+	private ArrayList<IStepListener>	m_stepListenerList;
+	private final StepActivity 			m_parentActivity;
+	
 	/*
 	 * Constantes de l'application
 	 */
@@ -60,6 +59,8 @@ public class StepDetector {
 
 		m_history 		= new MyLogs(HISTORY_MAX_LENGTH);
 		m_stateHistory 	= new ArrayList<Integer>(3);
+		
+		m_stepListenerList = new ArrayList<IStepListener>();
 	}
 
 	/*
@@ -98,8 +99,14 @@ public class StepDetector {
 	/*
 	 * Mets en pause ou reprend l'activite (capture des senseurs, log, mise à jour de l'ecran)
 	 */
-	void toggleActivity(boolean on) {
+	public void toggleActivity(boolean on) {
 		m_sensor.toggleActivity(on);
+	}
+	public void registerSensors() {
+		toggleActivity(true);
+	}
+	public void unregisterSensors() {
+		toggleActivity(false);
 	}
 
 	void handleMeasure(float _x, float _y, float _z) {
@@ -287,13 +294,12 @@ public class StepDetector {
 	 */
 
 	private void stepDetected() {
-		++m_iStepsCounter;
-		m_parentActivity.setStepsCounter(m_iStepsCounter);
-
-		// Add step detection in history
-		if (m_stepListener != null) {
-			float stepLength = computeStepLength();
-			m_stepListener.stepDetected(stepLength);
+        float stepLength = computeStepLength();
+		// Ajoute la detection de pas a l'historique
+		m_history.addStepDetected();
+		// Appel de stepDetected sur chaque listener
+		for(IStepListener _listener : m_stepListenerList) {
+			_listener.stepDetected(stepLength);
 		}
 	}
 
@@ -310,13 +316,6 @@ public class StepDetector {
 	}
 
 	/*
-	 * Remet à zéro le compteur de pas.
-	 */
-	public void resetStepsCounter() {
-		m_iStepsCounter = 0;
-	}
-
-	/*
 	 * Remet à zéro l'historique de l'application.
 	 */
 	public void resetHistory() {
@@ -327,7 +326,6 @@ public class StepDetector {
 	 * Remet à zéro toute la mémoire de l'application.
 	 */
 	public void resetAll() {
-		resetStepsCounter();
 		resetHistory();
 	}
 
@@ -362,12 +360,16 @@ public class StepDetector {
 	 * Spécifie l'écouteur de pas.
 	 */
 
-	public boolean setStepListener(IStepListener _listener) {
-		if (m_stepListener != null) {
-			return false;
-		}
-		m_stepListener = _listener;
-		return true;
+	public void addStepListener(IStepListener _listener) {
+		m_stepListenerList.add(_listener);
 	}
 
+	public void removeStepListener(IStepListener _listener) {
+		m_stepListenerList.remove(_listener);
+	}
+	
+	public void removeStepListener(int _indice) {
+		m_stepListenerList.remove(_indice);
+	}
+	
 }
