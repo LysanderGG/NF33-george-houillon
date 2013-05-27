@@ -47,11 +47,39 @@ public class StepDetector {
 	private static final float POSITIVE_DEFAULT_LIMIT_1_AXIS 		= +1.00f;
 	private static final float AMPLITUDE_DEFAULT_MINIMUM_1_AXIS 	= +2.00f;
 	
-	private float m_fLimitSensibility 		= 1.0f;
-	private float m_fAmplitudeSensibility 	= 1.0f;
+	private static final float LIMIT_SENSIBILITY_MIN 		= 1.0f;
+	private static final float LIMIT_SENSIBILITY_MAX 		= 3.0f;
+	private static final float LIMIT_SENSIBILITY_DEFAULT	= 3.0f;
+	private static final float AMPLITUDE_SENSIBILITY_MIN	= 1.0f;
+	private static final float AMPLITUDE_SENSIBILITY_MAX	= 3.0f;
+	private static final float AMPLITUDE_SENSIBILITY_DEFAULT= 3.0f;
+	private float m_fLimitSensibility 		= LIMIT_SENSIBILITY_DEFAULT;
+	private float m_fAmplitudeSensibility 	= AMPLITUDE_SENSIBILITY_DEFAULT;
 	
-	public StepDetector(StepActivity activity) {
-		m_parentActivity = activity;
+	/**
+	 * 
+	 * @param _activity : activite parente
+	 * @param _amplitudeSensibility : sensibilite de l'amplitude (entre 1 et 3)
+	 * @param _limitSensibility     : sensibilite de la limite de detection de phases (entre 1 et 3)
+	 */
+	public StepDetector(StepActivity _activity, float _limitSensibility, float _amplitudeSensibility) {
+		m_parentActivity    	= _activity;
+		
+		if(_limitSensibility < LIMIT_SENSIBILITY_MIN) {
+			m_fLimitSensibility = LIMIT_SENSIBILITY_MIN;
+		} else if(_limitSensibility > LIMIT_SENSIBILITY_MAX) {
+			m_fLimitSensibility = LIMIT_SENSIBILITY_MAX;
+		} else {
+			m_fLimitSensibility = _limitSensibility;
+		}
+		
+		if(_amplitudeSensibility < AMPLITUDE_SENSIBILITY_MIN) {
+			m_fAmplitudeSensibility = AMPLITUDE_SENSIBILITY_MIN;
+		} else if(_amplitudeSensibility > AMPLITUDE_SENSIBILITY_MAX) {
+			m_fAmplitudeSensibility = AMPLITUDE_SENSIBILITY_MAX;
+		} else {
+			m_fAmplitudeSensibility = _amplitudeSensibility;
+		}
 		
 		m_sensor 		= new Sensor(this);
 		m_sensorManager = (SensorManager)m_parentActivity.getSystemService(Context.SENSOR_SERVICE);
@@ -60,6 +88,10 @@ public class StepDetector {
 		m_stateHistory 	= new ArrayList<Integer>(3);
 		
 		m_stepListenerList = new ArrayList<IStepListener>();
+	}
+	
+	public StepDetector(StepActivity _activity) {
+		this(_activity, LIMIT_SENSIBILITY_DEFAULT, AMPLITUDE_SENSIBILITY_DEFAULT);
 	}
 
 	/*
@@ -329,3 +361,4 @@ public class StepDetector {
 	}
 	
 }
+
