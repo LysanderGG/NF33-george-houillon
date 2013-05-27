@@ -51,9 +51,9 @@ public class LocalisationManager{
 		
 		//d�s qu'on d�tecte un pas, on prend le dernier cap relev� et on l'envoie
 		//TODO Voir si on peut pas faire mieux
-		stepDetector.setStepListener(new IStepListener(){
+		stepDetector.addStepListener(new IStepListener() {
 			@Override
-			public void stepDetected(float _stepLength){
+			public void stepDetected(float _stepLength) {
 				computeNewPosition(_stepLength, cap);
 			}
 		});

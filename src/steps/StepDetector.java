@@ -17,9 +17,9 @@ public class StepDetector {
 	private Sensor 			m_sensor;
 	private SensorManager   m_sensorManager;
 	private MyLogs 			m_history;
-	private ArrayList<Integer> 	m_stateHistory;
-	private IStepListener		m_stepListener;
-	private final StepActivity 	m_parentActivity;
+	private ArrayList<Integer> 			m_stateHistory;
+	private ArrayList<IStepListener>	m_stepListenerList;
+	private final StepActivity 			m_parentActivity;
 	
 	/*
 	 * Constantes de l'application
@@ -259,10 +259,11 @@ public class StepDetector {
 		++m_iStepsCounter;
 		m_parentActivity.setStepsCounter(m_iStepsCounter);
 		
-		// Add step detection in history
+		// Ajoute la detection de pas a l'historique
 		m_history.addStepDetected();
-		if (m_stepListener != null) {
-			m_stepListener.stepDetected(CONSTANT_STEP_LENGTH);
+		// Appel de stepDetected sur chaque listener
+		for(IStepListener _listener : m_stepListenerList) {
+			_listener.stepDetected(CONSTANT_STEP_LENGTH);
 		}
 	}
 	
@@ -319,12 +320,16 @@ public class StepDetector {
 	 * Spécifie l'écouteur de pas.
 	 */
 
-	public boolean setStepListener(IStepListener _listener) {
-		if (m_stepListener != null) {
-			return false;
-		}
-		m_stepListener = _listener;
-		return true;
+	public void addStepListener(IStepListener _listener) {
+		m_stepListenerList.add(_listener);
 	}
 
+	public void removeStepListener(IStepListener _listener) {
+		m_stepListenerList.remove(_listener);
+	}
+	
+	public void removeStepListener(int _indice) {
+		m_stepListenerList.remove(_indice);
+	}
+	
 }
