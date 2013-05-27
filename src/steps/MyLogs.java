@@ -167,12 +167,12 @@ public class MyLogs {
 			buf.append(CSV_HEAD);
 			for (LogItem li : m_list) {
 				txt = String.format(
-					"%d;%f;%f;%f;%s;%f\n",
+					"%d;%f;%f;%f;%d;%f\n",
 					li.m_lTime - lastTimestamp,
 					li.m_coords[0],
 					li.m_coords[1],
 					li.m_coords[2],
-					li.m_bIsStepDetected ? "1" : "",
+					li.m_bIsStepDetected ? 1 : 0,
 					li.m_amplitude
 				);
 				buf.append(txt);
