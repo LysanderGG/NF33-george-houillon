@@ -107,7 +107,7 @@ public class MainActivity extends StepActivity implements IStepListener {
 		((SeekBar)(findViewById(R.id.seekBarLimit))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				m_stepDetector.setLimitSensibility(1.0f + (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
+				m_stepDetector.setLimitSensibility(3.0f - (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
 				m_tvLimit.setText(getString(R.string.limit) + " : " + m_stepDetector.getLimitSensibility());
 			}
 			
@@ -121,7 +121,7 @@ public class MainActivity extends StepActivity implements IStepListener {
 		((SeekBar)(findViewById(R.id.seekBarAmplitude))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				m_stepDetector.setAmplitudeSensibility(1.0f + (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
+				m_stepDetector.setAmplitudeSensibility(3.0f - (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
 				m_tvAmpli.setText(getString(R.string.amplitude) + " : " + m_stepDetector.getAmplitudeSensibility());
 			}
 			
@@ -177,7 +177,6 @@ public class MainActivity extends StepActivity implements IStepListener {
 			break;
 		}
 	}
-
 
 	@Override
 	public void setAxisBalance(int _balance) {
