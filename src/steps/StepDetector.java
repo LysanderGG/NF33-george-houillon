@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import steps.MyLogs.LogItem;
-
 import android.content.Context;
 import android.hardware.SensorManager;
 
@@ -13,14 +12,14 @@ public class StepDetector {
 	private float			m_fLastMax		= 0.0f;
 	private float			m_fLastMin		= 0.0f;
 	private boolean			m_bMultiAxis	= false;
-	
-	private Sensor 			m_sensor;
-	private SensorManager   m_sensorManager;
-	private MyLogs 			m_history;
-	private ArrayList<Integer> 	m_stateHistory;
+
+	private final Sensor 			m_sensor;
+	private final SensorManager   m_sensorManager;
+	private final MyLogs 			m_history;
+	private final ArrayList<Integer> 	m_stateHistory;
 	private IStepListener		m_stepListener;
 	private final StepActivity 	m_parentActivity;
-	
+
 	/*
 	 * Constantes de l'application
 	 */
@@ -39,7 +38,7 @@ public class StepDetector {
 
 	private int state = STATE_CAPTURING;
 
-	
+
 	private static final float NEGATIVE_DEFAULT_LIMIT_MULTI_AXIS 	= -1.00f;
 	private static final float POSITIVE_DEFAULT_LIMIT_MULTI_AXIS 	= +1.00f;
 	private static final float AMPLITUDE_DEFAULT_MINIMUM_MULTI_AXIS = +2.00f;
@@ -192,6 +191,9 @@ public class StepDetector {
 		// Déduit la gravité de la norme
 		norm -= Sensor.G;
 
+		boolean stepDetected = false;
+		float amplitude = 0f;
+
 		switch (state) {
 		// Cherche simultanement un minimum et un maximum local.
 		case STATE_CAPTURING:
@@ -221,7 +223,9 @@ public class StepDetector {
 			}
 			// Cherche une intersection avec l'origine
 			if (norm > 0) {
-				if (amplitudeCheck() && sequenceCheck()) {
+				amplitude = getStepAmplitude();
+				if (amplitudeCheck(amplitude) && sequenceCheck()) {
+					stepDetected = true;
 					stepDetected();
 				}
 				// Réinitialise la machine à états
@@ -234,11 +238,13 @@ public class StepDetector {
 		}
 
 		m_history.add(
-				now,
-				_x,
-				_y,
-				_z
-			);
+			now,
+			_x,
+			_y,
+			_z,
+			stepDetected,
+			amplitude
+		);
 	}
 
 	/*
@@ -258,8 +264,12 @@ public class StepDetector {
 	 * lors de la recherche des minimums et maximums locaux.
 	 */
 
-	private boolean amplitudeCheck() {
-		return m_fLastMax - m_fLastMin > getAmplitudeMinimum();
+	private float getStepAmplitude() {
+		return m_fLastMax - m_fLastMin;
+	}
+
+	private boolean amplitudeCheck(float amplitude) {
+		return amplitude > getAmplitudeMinimum();
 	}
 
 	/*
@@ -281,7 +291,6 @@ public class StepDetector {
 		m_parentActivity.setStepsCounter(m_iStepsCounter);
 
 		// Add step detection in history
-		m_history.addStepDetected();
 		if (m_stepListener != null) {
 			float stepLength = computeStepLength();
 			m_stepListener.stepDetected(stepLength);
