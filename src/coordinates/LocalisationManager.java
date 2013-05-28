@@ -1,6 +1,5 @@
 package coordinates;
 
-import java.util.ArrayList;
 import java.lang.Math;
 
 import cap.CapDetector;
@@ -10,38 +9,22 @@ import steps.StepActivity;
 import steps.StepDetector;
 
 public class LocalisationManager{
-	public class Position{
-		public float x;
-		public float y;
-		public float z;
-		
-		public Position(float x, float y, float z){
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-	}
-	
-	private ArrayList<Position> positions = new ArrayList<Position>();
+
 	private float currentPosition[] = {0,0,0};
 	private float oldPosition[] = {0,0,0};
 	private float cap;
+	
 	LocalisationListener localisationListener;
-	
 	CapDetector capDetector;
-	
 	StepDetector stepDetector;
 	
 	public LocalisationManager(StepActivity ativity){
-		Position first = new Position(0,0,0);
-		positions.add(first);
-		
 		localisationListener = null;
 		
 		capDetector = new CapDetector();
 		stepDetector = new StepDetector(ativity);
 		
-		//On r�cup�re les nouveaux cap en non stop
+		//On recupere les nouveaux cap en non-stop
 		capDetector.addHasChangedListener(new CapListener(){
 			@Override
 			public void hasChanged(float capn, float pitch, float roll){
@@ -49,7 +32,7 @@ public class LocalisationManager{
 			}
 		});
 		
-		//d�s qu'on d�tecte un pas, on prend le dernier cap relev� et on l'envoie
+		//des qu'on detecte un pas, on prend le dernier cap releve et on l'envoie
 		//TODO Voir si on peut pas faire mieux
 		stepDetector.addStepListener(new IStepListener() {
 			@Override
@@ -59,15 +42,11 @@ public class LocalisationManager{
 		});
 	}
 	
-	public float[] getCurrentPosition(){		
-		return currentPosition;
-	}
-	
 	private void computeNewPosition(float _stepLength, float cap){
 		//calculer la nouvelle position ac le cap
 		float newPosition[] = {0,0,0};
 		
-		//ahah vive les maths, je sais plus comment on fait �a
+		//ahah vive les maths, je sais plus comment on fait ca
 		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(cap);
 		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(cap);
 		
@@ -75,10 +54,8 @@ public class LocalisationManager{
 		oldPosition = currentPosition;
 		currentPosition = newPosition;
 		
-		//d�clencher le listener pour dire qu'il y a une nouvelle position
+		//declencher le listener pour dire qu'il y a une nouvelle position
 		localisationListener.onNewPosition(oldPosition, currentPosition);
-
-		positions.add(new Position(newPosition[0],newPosition[1],0));
 	}
 	
 	public void setLocalisationListener(LocalisationListener listener){
