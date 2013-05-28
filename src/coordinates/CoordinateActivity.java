@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import cap.CapDetector;
 import cap.CapListener;
 
@@ -28,6 +29,7 @@ public class CoordinateActivity extends StepActivity {
 	
 	CapDetector capDetector;	
 	StepDetector stepDetector;
+	LocalisationManager localisationManager;
 	
 	LinearLayout.LayoutParams lParamsName;
 	LinearLayout mapLayout;
@@ -69,6 +71,8 @@ public class CoordinateActivity extends StepActivity {
 			}
 		});
 		
+		
+		
 		mapLayout = (LinearLayout) findViewById(R.id.mapLayout);
 		// then build the view
 		mapView = new MapView(this);
@@ -77,6 +81,16 @@ public class CoordinateActivity extends StepActivity {
 				LinearLayout.LayoutParams.WRAP_CONTENT);
 		// add the view in the layout
 		mapLayout.addView(mapView, layoutParam);
+		
+		localisationManager = new LocalisationManager(this);
+		localisationManager.setLocalisationListener(new LocalisationListener() {
+			@Override
+			public void onNewPosition(float[] oldPosition, float[] newPosition) {
+				mapView.redraw(newPosition[0], newPosition[1]);
+				Toast toast = Toast.makeText(CoordinateActivity.this,"X : "+Float.toString(newPosition[0]),Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
 	}
 
 	@Override  
@@ -84,7 +98,7 @@ public class CoordinateActivity extends StepActivity {
         //unregister every sensor
         m_sensorManager.unregisterListener(capDetector, m_accelerometer); 
         m_sensorManager.unregisterListener(capDetector, m_magnetic);
-        stepDetector.toggleActivity(false);
+        stepDetector.unregisterSensors();
         super.onPause();  
     }
 
@@ -93,7 +107,7 @@ public class CoordinateActivity extends StepActivity {
         //register listener
         m_sensorManager.registerListener(capDetector,m_accelerometer, m_sensorManager.SENSOR_DELAY_UI); 
         m_sensorManager.registerListener(capDetector,m_magnetic,m_sensorManager.SENSOR_DELAY_UI);
-        stepDetector.toggleActivity(true);
+        stepDetector.registerSensors();
         super.onResume(); 
     }
   
@@ -102,7 +116,7 @@ public class CoordinateActivity extends StepActivity {
         //cancel register
         m_sensorManager.unregisterListener(capDetector, m_accelerometer); 
         m_sensorManager.unregisterListener(capDetector, m_magnetic);
-        stepDetector.toggleActivity(false);
+        stepDetector.unregisterSensors();
         super.onStop();  
     }
 	@Override
