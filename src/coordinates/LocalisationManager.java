@@ -40,6 +40,7 @@ public class LocalisationManager{
 				computeNewPosition(_stepLength, cap);
 			}
 		});
+		stepDetector.registerSensors();
 	}
 	
 	private void computeNewPosition(float _stepLength, float cap){
