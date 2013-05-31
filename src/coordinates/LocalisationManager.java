@@ -18,7 +18,7 @@ public class LocalisationManager{
 	CapDetector capDetector;
 	StepDetector stepDetector;
 	
-	public LocalisationManager(StepActivity ativity){
+	public LocalisationManager(CoordinateActivity ativity){
 		localisationListener = null;
 		
 		capDetector = new CapDetector();
@@ -57,6 +57,14 @@ public class LocalisationManager{
 		
 		//declencher le listener pour dire qu'il y a une nouvelle position
 		localisationListener.onNewPosition(oldPosition, currentPosition);
+	}
+	
+	public CapDetector getCapDetector(){
+		return capDetector;
+	}
+	
+	public StepDetector getStepDetector(){
+		return stepDetector;
 	}
 	
 	public void setLocalisationListener(LocalisationListener listener){
