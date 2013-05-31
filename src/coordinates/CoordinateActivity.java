@@ -42,6 +42,7 @@ public class CoordinateActivity extends StepActivity {
 		
 		textViewStep = (TextView) findViewById(R.id.TextViewStepValue);
 		progressBarCap = (ProgressBar) findViewById(R.id.ProgressBarCap);
+		progressBarCap.setMax(360);
 		
 		// Instantiate the SensorManager
 		m_sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -95,6 +96,13 @@ public class CoordinateActivity extends StepActivity {
 		
 		
 	}
+	
+	 @Override
+		protected void onDestroy() {
+			// kill the thread
+		 mapView.isRunning.set(false);
+			super.onDestroy();
+		}
 
 	@Override  
     protected void onPause() {  
