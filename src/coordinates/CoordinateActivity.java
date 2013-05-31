@@ -23,7 +23,7 @@ public class CoordinateActivity extends StepActivity {
 	int nbStep = 0;
 	
 	/** * The sensor manager */
-	private SensorManager m_sensorManager = null;
+	private SensorManager m_sensorManager;
 	private Sensor m_magnetic;
 	private Sensor m_accelerometer;
 	
@@ -50,7 +50,18 @@ public class CoordinateActivity extends StepActivity {
 		// Instantiate the accelerometer
 		m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		
-		capDetector = new CapDetector();
+
+		localisationManager = new LocalisationManager(this);
+		localisationManager.setLocalisationListener(new LocalisationListener() {
+			@Override
+			public void onNewPosition(float[] oldPosition, float[] newPosition) {
+				mapView.redraw(newPosition[0], newPosition[1]);
+				Toast toast = Toast.makeText(CoordinateActivity.this,"X : "+Float.toString(newPosition[0]),Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
+		
+		capDetector = localisationManager.getCapDetector();
 		capDetector.addHasChangedListener(new CapListener() {
 			@Override
 			public void hasChanged(float cap, float pitch, float roll) {
@@ -62,7 +73,7 @@ public class CoordinateActivity extends StepActivity {
 		});
 		
 		//StepDetector
-		stepDetector = new StepDetector(this);
+		stepDetector = localisationManager.getStepDetector();
 		stepDetector.addStepListener(new IStepListener() {
 			@Override
 			public void stepDetected(float _stepLength) {
@@ -82,15 +93,7 @@ public class CoordinateActivity extends StepActivity {
 		// add the view in the layout
 		mapLayout.addView(mapView, layoutParam);
 		
-		localisationManager = new LocalisationManager(this);
-		localisationManager.setLocalisationListener(new LocalisationListener() {
-			@Override
-			public void onNewPosition(float[] oldPosition, float[] newPosition) {
-				mapView.redraw(newPosition[0], newPosition[1]);
-				Toast toast = Toast.makeText(CoordinateActivity.this,"X : "+Float.toString(newPosition[0]),Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		});
+		
 	}
 
 	@Override  
