@@ -47,6 +47,9 @@ public class LocalisationManager{
 		//calculer la nouvelle position ac le cap
 		float newPosition[] = {0,0,0};
 		
+		if(cap < 0)
+			cap += 360;
+		
 		//ahah vive les maths, je sais plus comment on fait ca
 		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(cap);
 		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(cap);

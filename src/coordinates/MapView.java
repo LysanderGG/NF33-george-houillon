@@ -133,8 +133,8 @@ public class MapView extends View{
 			computeFirstPoint();
 			firstPoint = true;
 		}
-		lastPosition.x += (positionsList.get(0).x + x);
-		lastPosition.y -= (positionsList.get(0).y - y);
+		lastPosition.x = (positionsList.get(0).x + x*10);
+		lastPosition.y = (positionsList.get(0).y - y*10);
 		positionsList.add(new Position(lastPosition.x,lastPosition.y));
 		invalidate();
 	}
