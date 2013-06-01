@@ -34,8 +34,8 @@
         
         <activity
             android:name="coordinates.CoordinateActivity"
-            android:label="@string/title_activity_coordinate" >
-            
+            android:label="@string/title_activity_coordinate"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
