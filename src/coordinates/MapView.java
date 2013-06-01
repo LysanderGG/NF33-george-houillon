@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.Toast;
 
 public class MapView extends View{
 	public class Position{
@@ -22,7 +23,6 @@ public class MapView extends View{
 	
 	//The paint to draw the view
 	private Paint paint = new Paint();
-	private Canvas canvas;
 	
 	CoordinateActivity activity;
 	//LocalisationManager localisationManager;
@@ -91,7 +91,8 @@ public class MapView extends View{
 							Thread.sleep(2000);
 						} else {
 							// Redraw to have 30 images by second
-							Thread.sleep(1000 / 30);
+							//Thread.sleep(1000 / 30);
+							Thread.sleep(3000);
 							// Send the message to the handler (the handler.obtainMessage is more
 							// efficient that creating a message from scratch)
 							// create a message, the best way is to use that method:
@@ -116,7 +117,7 @@ public class MapView extends View{
 	private void computeFirstPoint(){
 		float x, y;
 		x = getWidth()/2;
-		y = getHeight();
+		y = getHeight()-15;
 		lastPosition = new Position(x,y);
 		positionsList.add(new Position(x,y));
 	}
@@ -132,8 +133,8 @@ public class MapView extends View{
 			computeFirstPoint();
 			firstPoint = true;
 		}
-		lastPosition.x += x;
-		lastPosition.y += y;
+		lastPosition.x += (positionsList.get(0).x + x);
+		lastPosition.y -= (positionsList.get(0).y - y);
 		positionsList.add(new Position(lastPosition.x,lastPosition.y));
 		invalidate();
 	}
@@ -146,7 +147,9 @@ public class MapView extends View{
 		}
 		//draw map
 		canvas.save();
-		
+		//canvas.scale(getWidth(),getHeight());
+		Toast toast = Toast.makeText(activity,"Y : "+Float.toString(positionsList.get(positionsList.size()-1).y),Toast.LENGTH_SHORT);
+		toast.show();
 		int size = positionsList.size();
 		for(int i=0; i<size; i++){
 			paint.setColor(Color.RED);

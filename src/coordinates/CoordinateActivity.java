@@ -57,8 +57,6 @@ public class CoordinateActivity extends StepActivity {
 			@Override
 			public void onNewPosition(float[] oldPosition, float[] newPosition) {
 				mapView.redraw(newPosition[0], newPosition[1]);
-				Toast toast = Toast.makeText(CoordinateActivity.this,"X : "+Float.toString(newPosition[0]),Toast.LENGTH_SHORT);
-				toast.show();
 			}
 		});
 		
