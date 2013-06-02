@@ -18,8 +18,7 @@
 	
 	<string name="title_activity_coordinate">CoordinateActivity</string>
 	<string name="hello_world">Hello world!</string>
-	<string name="cap">Cap : </string>
-    <string name="coord">Coordonnées : </string>
+	<string name="cap">Cap value : </string>
     
     <string name="title_activity_cap">CapActivity</string>
     <string name="xValue">X value : </string>

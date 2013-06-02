@@ -11,7 +11,6 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.Toast;
 
 public class MapView extends View{
 	public class Position{
@@ -61,9 +60,6 @@ public class MapView extends View{
 		northPath.close();
 		
 		slowDownDrawingHandler = new Handler() {
-			/*
-			 * @see android.os.Handler#handleMessage(android.os.Message)
-			 */
 			@Override
 			public void handleMessage(Message msg) {
 				super.handleMessage(msg);

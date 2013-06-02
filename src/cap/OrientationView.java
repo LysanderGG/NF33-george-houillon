@@ -1,17 +1,12 @@
 
 package cap;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 
 import com.example.nf33.R;
@@ -22,10 +17,8 @@ public class OrientationView extends View {
 	private CapActivity activity;
 
 	private Paint paint = new Paint();
-	private Canvas canvas;
 	private Path northPath = new Path();
 	private Path southPath = new Path();
-	private boolean mAnimate;
 	private Paint.FontMetrics mFontMetrics;
 	private int textColor, backgroundCircleColor, circleColor;
 	private float fontHeight;
