@@ -17,16 +17,13 @@ public class PageChooseActivity extends Activity {
 		setContentView(R.layout.activity_page_choose);
 		
 		//change the interface to Cap
-		//TODO the interface of Cap
 		Button buttonCap = (Button) findViewById(R.id.buttonCap);
 		buttonCap.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Intent intent = new Intent();
-				//intent.setClass(PageChooseActivity.this, .class);
-				//startActivity(intent);
-
+				intent.setClass(PageChooseActivity.this, cap.CapActivity.class);
+				startActivity(intent);
 			}
 		});
 		
@@ -35,7 +32,6 @@ public class PageChooseActivity extends Activity {
 		buttonStep.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(PageChooseActivity.this, steps.MainActivity.class);
 				startActivity(intent);
@@ -49,7 +45,6 @@ public class PageChooseActivity extends Activity {
 		buttonCoordinate.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(PageChooseActivity.this, coordinates.CoordinateActivity.class);
 				startActivity(intent);

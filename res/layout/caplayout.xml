@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:screenOrientation="portrait" >
+	
+	<LinearLayout 
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:screenOrientation="portrait">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:textStyle="bold"
+			android:text="@string/xValue">
+		</TextView>
+		<ProgressBar android:layout_height="wrap_content"
+			android:id="@+id/progressBarX"
+			android:layout_width="fill_parent"
+			style="?android:attr/progressBarStyleHorizontal">
+		</ProgressBar>
+	</LinearLayout>
+	<LinearLayout 
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:screenOrientation="portrait">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:textStyle="bold"
+			android:text="@string/yValue">
+		</TextView>
+		<ProgressBar android:layout_height="wrap_content"
+			android:id="@+id/progressBarY"
+			android:layout_width="fill_parent"
+			style="?android:attr/progressBarStyleHorizontal">
+		</ProgressBar>
+	</LinearLayout>
+	<LinearLayout 
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:screenOrientation="portrait">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:textStyle="bold"
+			android:text="@string/zValue">
+		</TextView>
+		<ProgressBar android:layout_height="wrap_content"
+			android:id="@+id/progressBarZ"
+			android:layout_width="fill_parent"
+			style="?android:attr/progressBarStyleHorizontal">
+		</ProgressBar>
+	</LinearLayout>
+	<LinearLayout 
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:id="@+id/layoutOfXYAcceleration"
+		android:background="#99ffffff"
+		android:layout_marginTop="5dp"
+		android:screenOrientation="portrait">
+	</LinearLayout>
+	
+</LinearLayout>
