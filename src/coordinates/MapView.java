@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -23,7 +24,7 @@ public class MapView extends View{
 	
 	//The paint to draw the view
 	private Paint paint = new Paint();
-	
+	Path northPath = new Path();
 	CoordinateActivity activity;
 	//LocalisationManager localisationManager;
 	Position lastPosition;
@@ -52,6 +53,12 @@ public class MapView extends View{
 	public MapView(Context context){
 		super(context);
 		activity = (CoordinateActivity) context;
+		
+		
+		northPath.moveTo(10, 5);
+		northPath.lineTo(15, 25);
+		northPath.lineTo(5, 25);
+		northPath.close();
 		
 		slowDownDrawingHandler = new Handler() {
 			/*
@@ -118,8 +125,8 @@ public class MapView extends View{
 			computeFirstPoint();
 			firstPoint = true;
 		}
-		lastPosition.x = (positionsList.get(0).x + x*10);
-		lastPosition.y = (positionsList.get(0).y - y*10);
+		lastPosition.x = (positionsList.get(0).x + x*20);
+		lastPosition.y = (positionsList.get(0).y - y*20);
 		positionsList.add(new Position(lastPosition.x,lastPosition.y));
 		invalidate();
 	}
@@ -134,10 +141,16 @@ public class MapView extends View{
 		canvas.save();
 		//canvas.scale(getWidth(),getHeight());
 
+		paint.setStyle(Paint.Style.FILL);
+		paint.setColor(Color.RED);
+		canvas.drawPath(northPath, paint);
+		paint.setColor(Color.BLACK);
+		canvas.drawText("N", 5, 35, paint);
+		
 		int size = positionsList.size();
 		for(int i=0; i<size; i++){
 			paint.setColor(Color.RED);
-			canvas.drawPoint(positionsList.get(i).x,positionsList.get(i).y, paint);
+			canvas.drawCircle(positionsList.get(i).x,positionsList.get(i).y, 3, paint);
 			
 			if(i<size-1){
 				paint.setColor(Color.BLACK);
