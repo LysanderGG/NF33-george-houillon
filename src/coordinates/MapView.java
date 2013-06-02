@@ -52,19 +52,6 @@ public class MapView extends View{
 	public MapView(Context context){
 		super(context);
 		activity = (CoordinateActivity) context;
-			
-		/*localisationManager = new LocalisationManager(activity);
-		localisationManager.setLocalisationListener(new LocalisationListener() {
-			@Override
-			public void onNewPosition(float[] oldPosition, float[] newPosition) {
-				lastPosition.x += newPosition[0];
-				lastPosition.y += newPosition[1];
-				positionsList.add(new Position(lastPosition.x,lastPosition.y));
-				redraw();
-			}
-		});*/
-		
-		
 		
 		slowDownDrawingHandler = new Handler() {
 			/*
@@ -117,14 +104,12 @@ public class MapView extends View{
 	private void computeFirstPoint(){
 		float x, y;
 		x = getWidth()/2;
-		y = getHeight()-15;
+		y = getHeight()/2;
 		lastPosition = new Position(x,y);
 		positionsList.add(new Position(x,y));
 	}
 	
 	private void redraw() {
-		// Log.d(tag, "redraw");
-		// and make sure to redraw asap
 		invalidate();
 	}
 	
@@ -148,8 +133,7 @@ public class MapView extends View{
 		//draw map
 		canvas.save();
 		//canvas.scale(getWidth(),getHeight());
-		Toast toast = Toast.makeText(activity,"Y : "+Float.toString(positionsList.get(positionsList.size()-1).y),Toast.LENGTH_SHORT);
-		toast.show();
+
 		int size = positionsList.size();
 		for(int i=0; i<size; i++){
 			paint.setColor(Color.RED);

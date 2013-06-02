@@ -5,7 +5,6 @@ import java.lang.Math;
 import cap.CapDetector;
 import cap.CapListener;
 import steps.IStepListener;
-import steps.StepActivity;
 import steps.StepDetector;
 
 public class LocalisationManager{
@@ -18,11 +17,11 @@ public class LocalisationManager{
 	CapDetector capDetector;
 	StepDetector stepDetector;
 	
-	public LocalisationManager(CoordinateActivity ativity){
+	public LocalisationManager(CoordinateActivity activity){
 		localisationListener = null;
 		
 		capDetector = new CapDetector();
-		stepDetector = new StepDetector(ativity);
+		stepDetector = new StepDetector(activity);
 		
 		//On recupere les nouveaux cap en non-stop
 		capDetector.addHasChangedListener(new CapListener(){
@@ -43,16 +42,15 @@ public class LocalisationManager{
 		stepDetector.registerSensors();
 	}
 	
-	private void computeNewPosition(float _stepLength, float cap){
+	private void computeNewPosition(float _stepLength, float _cap){
 		//calculer la nouvelle position ac le cap
 		float newPosition[] = {0,0,0};
 		
-		if(cap < 0)
-			cap += 360;
-		
-		//ahah vive les maths, je sais plus comment on fait ca
-		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(cap);
-		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(cap);
+		if(_cap < 0)
+			_cap += 360;
+
+		newPosition[0] = currentPosition[0] + _stepLength*(float)Math.sin(Math.toRadians(_cap));
+		newPosition[1] = currentPosition[1] + _stepLength*(float)Math.cos(Math.toRadians(_cap));
 		
 		//M-a-J des variables
 		oldPosition = currentPosition;
