@@ -10,7 +10,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 
 public class MapView extends View{
 	public class Position{
@@ -20,6 +22,12 @@ public class MapView extends View{
 			this.y = y; 
 		}
 	}
+	
+	// Screen dimensions
+	private final int screenWidth;
+	private final int screenHeight;
+	private final static int SCREEN_WIDTH_PADDING = 50;
+	private final static int SCREEN_HEIGHT_PADDING = 50;
 	
 	//The paint to draw the view
 	private Paint paint = new Paint();
@@ -49,10 +57,16 @@ public class MapView extends View{
 	
 	
 	
-	public MapView(Context context){
+	@SuppressWarnings("deprecation")
+    public MapView(Context context){
 		super(context);
 		activity = (CoordinateActivity) context;
 		
+		// Set screen dimensions.
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		screenWidth  = display.getWidth();
+		screenHeight = display.getHeight();
 		
 		northPath.moveTo(10, 5);
 		northPath.lineTo(15, 25);
@@ -121,9 +135,28 @@ public class MapView extends View{
 			computeFirstPoint();
 			firstPoint = true;
 		}
-		lastPosition.x = (positionsList.get(0).x + x*20);
-		lastPosition.y = (positionsList.get(0).y - y*20);
+		
+		float newX = x * 20;
+		float newY = y * 20;
+		
+		lastPosition.x = (positionsList.get(0).x + newX);
+		lastPosition.y = (positionsList.get(0).y - newY);
 		positionsList.add(new Position(lastPosition.x,lastPosition.y));
+		
+		// If the step position is out of the screen
+		// Recompute all positions.
+		if(lastPosition.x < SCREEN_WIDTH_PADDING) {
+		    addToXInPositionList(-lastPosition.x + positionsList.get(positionsList.size()-2).x);
+		} else if(lastPosition.x > screenWidth - SCREEN_WIDTH_PADDING) {
+		    addToXInPositionList(-lastPosition.x + positionsList.get(positionsList.size()-2).x);
+		}
+		
+		if(lastPosition.y < SCREEN_HEIGHT_PADDING) {
+		    addToYInPositionList(-lastPosition.y + positionsList.get(positionsList.size()-2).y);
+		} else if(lastPosition.y > screenHeight - SCREEN_HEIGHT_PADDING) {
+		    addToYInPositionList(-lastPosition.y + positionsList.get(positionsList.size()-2).y);
+		}
+		
 		invalidate();
 	}
 	
@@ -156,4 +189,23 @@ public class MapView extends View{
 		}
 		canvas.restore();
 	}
+	
+	private void addToXInPositionList(float x) {
+	    for(Position p : positionsList) {
+	        p.x += x;
+	    }
+	}
+	
+	private void addToYInPositionList(float y) {
+        for(Position p : positionsList) {
+            p.y += y;
+        }
+    }
+	
+	private void addToXYInPositionList(float x, float y) {
+        for(Position p : positionsList) {
+            p.x += x;
+            p.y += y;
+        }
+    }
 }
