@@ -20,7 +20,7 @@ public class LocalisationManager{
 	public LocalisationManager(CoordinateActivity activity){
 		localisationListener = null;
 		
-		capDetector = new CapDetector();
+		capDetector = new CapDetector(true);
 		stepDetector = new StepDetector(activity);
 		
 		//On recupere les nouveaux cap en non-stop
@@ -36,7 +36,8 @@ public class LocalisationManager{
 		stepDetector.addStepListener(new IStepListener() {
 			@Override
 			public void stepDetected(float _stepLength) {
-				computeNewPosition(_stepLength, cap);
+				computeNewPosition(_stepLength, capDetector.getOldCap());
+				capDetector.clearList();
 			}
 		});
 		stepDetector.registerSensors();

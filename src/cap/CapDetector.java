@@ -2,13 +2,14 @@ package cap;
 
 import java.util.ArrayList;
 
+import coordinates.MapView.Position;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class CapDetector implements SensorEventListener {
-
 	/**
 	 * Current value of the accelerometer
 	 */
@@ -19,18 +20,21 @@ public class CapDetector implements SensorEventListener {
 	float[] resultMatrix=new float[9];
 	float[] values=new float[3];
 	
+	ArrayList<Float> capList = new ArrayList<Float>(); 
+	boolean v2 = false;
 	private ArrayList<CapListener>  capListenerList;
 	
-	public CapDetector() {
+	public CapDetector(boolean _v2) {
 		capListenerList = new ArrayList<CapListener>();
+		v2 = _v2;
 	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-			acceleromterVector=event.values;
+			acceleromterVector = event.values;
 		else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-			magneticVector=event.values;
+			magneticVector = event.values;
 		
 		SensorManager.getRotationMatrix(resultMatrix, null, acceleromterVector, magneticVector);
 		SensorManager.getOrientation(resultMatrix, values);
@@ -45,6 +49,9 @@ public class CapDetector implements SensorEventListener {
 		//emit a changing
 		for(CapListener listener : capListenerList)
 			listener.hasChanged(x,y,z);
+		
+		if(v2)
+			capList.add(x);
 	}
 	
 	@Override
@@ -56,8 +63,16 @@ public class CapDetector implements SensorEventListener {
 	public void addHasChangedListener(CapListener listener){
 		capListenerList.add(listener);
 	}
-		
+	
 	public float getCap(){
 		return x;
+	}
+	
+	public float getOldCap(){
+		return capList.get(capList.size()-10);
+	}
+	
+	public void clearList(){
+		capList.clear();
 	}
 }

@@ -49,7 +49,7 @@ public class CapActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		capDetector = new CapDetector();
+		capDetector = new CapDetector(false);
 		
 		// build the GUI
 		setContentView(R.layout.caplayout);
