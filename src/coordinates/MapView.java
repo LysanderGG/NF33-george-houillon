@@ -80,9 +80,8 @@ public class MapView extends View{
 						if (isPausing.get()) {
 							Thread.sleep(2000);
 						} else {
-							// Redraw to have 30 images by second
-							//Thread.sleep(1000 / 30);
-							Thread.sleep(3000);
+							// Redraw to have 2 images a second
+							Thread.sleep(500);
 							// Send the message to the handler (the handler.obtainMessage is more
 							// efficient that creating a message from scratch)
 							// create a message, the best way is to use that method:
