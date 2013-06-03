@@ -48,10 +48,10 @@ public class StepDetector {
     
     private static final float LIMIT_SENSIBILITY_MIN        = 1.0f;
     private static final float LIMIT_SENSIBILITY_MAX        = 3.0f;
-    private static final float LIMIT_SENSIBILITY_DEFAULT    = 3.0f;
+    private static final float LIMIT_SENSIBILITY_DEFAULT    = 2.0f;
     private static final float AMPLITUDE_SENSIBILITY_MIN    = 1.0f;
     private static final float AMPLITUDE_SENSIBILITY_MAX    = 3.0f;
-    private static final float AMPLITUDE_SENSIBILITY_DEFAULT= 3.0f;
+    private static final float AMPLITUDE_SENSIBILITY_DEFAULT= 2.0f;
     private float m_fLimitSensibility     = LIMIT_SENSIBILITY_DEFAULT;
     private float m_fAmplitudeSensibility = AMPLITUDE_SENSIBILITY_DEFAULT;
     
