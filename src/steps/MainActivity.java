@@ -2,6 +2,7 @@ package steps;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
@@ -194,5 +195,27 @@ public class MainActivity extends StepActivity implements IStepListener {
     public void stepDetected(float _stepLength) {
         setStepsCounter(++m_iStepsCounter);
     }
+    
+    @Override  
+    protected void onPause() {  
+        //unregister every sensor
+        m_stepDetector.unregisterSensors();
+        super.onPause();  
+    }
+
+    @Override  
+    protected void onResume() {  
+        //register listener
+        m_stepDetector.registerSensors();
+        super.onResume(); 
+    }
+  
+    @Override  
+    protected void onStop() {
+        //cancel register
+        m_stepDetector.unregisterSensors();
+        super.onStop();  
+    }
+
     
 }
