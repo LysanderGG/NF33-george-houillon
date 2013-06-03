@@ -113,8 +113,8 @@ public class CoordinateActivity extends StepActivity {
 	@Override  
     protected void onResume() {  
         //register listener
-        m_sensorManager.registerListener(capDetector,m_accelerometer, m_sensorManager.SENSOR_DELAY_UI); 
-        m_sensorManager.registerListener(capDetector,m_magnetic,m_sensorManager.SENSOR_DELAY_UI);
+        m_sensorManager.registerListener(capDetector,m_accelerometer, SensorManager.SENSOR_DELAY_UI); 
+        m_sensorManager.registerListener(capDetector,m_magnetic, SensorManager.SENSOR_DELAY_UI);
         stepDetector.registerSensors();
         super.onResume(); 
     }

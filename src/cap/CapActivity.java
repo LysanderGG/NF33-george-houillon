@@ -105,8 +105,8 @@ public class CapActivity extends Activity{
 	@Override  
     protected void onResume() {  
         //register listener
-        m_sensorManager.registerListener(capDetector,m_accelerometer, m_sensorManager.SENSOR_DELAY_UI); 
-        m_sensorManager.registerListener(capDetector,m_magnetic,m_sensorManager.SENSOR_DELAY_UI);
+        m_sensorManager.registerListener(capDetector,m_accelerometer, SensorManager.SENSOR_DELAY_UI); 
+        m_sensorManager.registerListener(capDetector,m_magnetic, SensorManager.SENSOR_DELAY_UI);
         super.onResume(); 
     }
   

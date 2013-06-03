@@ -122,6 +122,8 @@ public class MyLogs {
                 // Ni lecture ni écriture
                 externalStorageAvailable = externalStorageWriteable = false;
             }
+            
+            Log.i(_tag, "\n\nExternal Media: readable=" + externalStorageAvailable + " writable=" + externalStorageWriteable);
 
             // Création des dossiers
             File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);

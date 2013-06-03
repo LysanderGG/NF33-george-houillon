@@ -338,7 +338,7 @@ public class StepDetector {
      */
 
     private float computeStepLength() {
-        long stepDuration = Calendar.getInstance().getTimeInMillis() - m_iCaptureStartTime;
+        //long stepDuration = Calendar.getInstance().getTimeInMillis() - m_iCaptureStartTime;
         // L = 45% de la taille de la personne + 0.3 * vitesse de marche
         return CONSTANT_STEP_LENGTH;
     }
