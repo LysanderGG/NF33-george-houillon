@@ -23,9 +23,6 @@ public class MapView extends View{
 		}
 	}
 	
-	// Screen dimensions
-	private final int screenWidth;
-	private final int screenHeight;
 	private final static int SCREEN_WIDTH_PADDING = 50;
 	private final static int SCREEN_HEIGHT_PADDING = 50;
 	
@@ -61,12 +58,6 @@ public class MapView extends View{
     public MapView(Context context){
 		super(context);
 		activity = (CoordinateActivity) context;
-		
-		// Set screen dimensions.
-		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-		Display display = wm.getDefaultDisplay();
-		screenWidth  = display.getWidth();
-		screenHeight = display.getHeight();
 		
 		northPath.moveTo(10, 5);
 		northPath.lineTo(15, 25);
@@ -140,20 +131,21 @@ public class MapView extends View{
 		
 		lastPosition.x = (positionsList.get(0).x + newX);
 		lastPosition.y = (positionsList.get(0).y - newY);
+		
 		positionsList.add(new Position(lastPosition.x,lastPosition.y));
 		
 		// If the step position is out of the screen
 		// Recompute all positions.
 		if(lastPosition.x < SCREEN_WIDTH_PADDING) {
-		    addToXInPositionList(-lastPosition.x + positionsList.get(positionsList.size()-2).x);
-		} else if(lastPosition.x > screenWidth - SCREEN_WIDTH_PADDING) {
-		    addToXInPositionList(-lastPosition.x + positionsList.get(positionsList.size()-2).x);
+		    addToXInPositionList(positionsList.get(positionsList.size()-2).x - lastPosition.x);
+		} else if(lastPosition.x > this.getWidth() - SCREEN_WIDTH_PADDING) {
+		    addToXInPositionList(positionsList.get(positionsList.size()-2).x - lastPosition.x);
 		}
 		
 		if(lastPosition.y < SCREEN_HEIGHT_PADDING) {
-		    addToYInPositionList(-lastPosition.y + positionsList.get(positionsList.size()-2).y);
-		} else if(lastPosition.y > screenHeight - SCREEN_HEIGHT_PADDING) {
-		    addToYInPositionList(-lastPosition.y + positionsList.get(positionsList.size()-2).y);
+		    addToYInPositionList(positionsList.get(positionsList.size()-2).y - lastPosition.y);
+		} else if(lastPosition.y >  this.getHeight() - SCREEN_HEIGHT_PADDING) {
+		    addToYInPositionList(positionsList.get(positionsList.size()-2).y - lastPosition.y);
 		}
 		
 		invalidate();
