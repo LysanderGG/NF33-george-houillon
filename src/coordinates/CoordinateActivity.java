@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import cap.CapDetector;
 import cap.CapListener;
 
@@ -17,8 +19,9 @@ import com.example.nf33.R;
 
 public class CoordinateActivity extends StepActivity {
 
-	TextView textViewStep;
+	TextView textViewStep, tvAmpli;
 	ProgressBar progressBarCap;
+	//SeekBar seekBarAmplitude;
 	int nbStep = 0;
 	
 	/** * The sensor manager */
@@ -40,6 +43,7 @@ public class CoordinateActivity extends StepActivity {
 		setContentView(R.layout.activity_coordinate);
 		
 		textViewStep = (TextView) findViewById(R.id.TextViewStepValue);
+		tvAmpli = (TextView) findViewById(R.id.tv_ampli);
 		progressBarCap = (ProgressBar) findViewById(R.id.ProgressBarCap);
 		progressBarCap.setMax(360);
 		
@@ -80,7 +84,19 @@ public class CoordinateActivity extends StepActivity {
 			}
 		});
 		
-		
+		((SeekBar)(findViewById(R.id.seekBarAmplitude))).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                stepDetector.setAmplitudeSensibility(3.0f - (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
+                tvAmpli.setText(getString(R.string.amplitude) + " : " + stepDetector.getAmplitudeSensibility());
+            }
+            
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
 		
 		mapLayout = (LinearLayout) findViewById(R.id.mapLayout);
 		// then build the view
