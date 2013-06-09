@@ -11,6 +11,8 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -22,9 +24,13 @@ public class MapView extends View{
 			this.y = y; 
 		}
 	}
-	
-	private final static int SCREEN_WIDTH_PADDING = 50;
+	/*
+	 * Screen display management 
+	 */
+	private final static int SCREEN_WIDTH_PADDING  = 50;
 	private final static int SCREEN_HEIGHT_PADDING = 50;
+	private float m_lastX = 0;
+	private float m_lastY = 0;
 	
 	//The paint to draw the view
 	private Paint paint = new Paint();
@@ -199,4 +205,34 @@ public class MapView extends View{
             p.y += y;
         }
     }
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		final float x = event.getX();
+		final float y = event.getY();
+		
+		switch(event.getAction() & MotionEvent.ACTION_MASK) {
+		case MotionEvent.ACTION_DOWN:
+			m_lastX = x;
+			m_lastY = y;
+		case MotionEvent.ACTION_MOVE:
+			float deltaX = x - m_lastX;
+			float deltaY = y - m_lastY;
+			// The last point must stay in the view 
+			if(		positionsList.get(positionsList.size()-1).x + deltaX > SCREEN_WIDTH_PADDING
+				&&	positionsList.get(positionsList.size()-1).x + deltaX < this.getWidth() - SCREEN_WIDTH_PADDING
+				&&	positionsList.get(positionsList.size()-1).y + deltaY > SCREEN_HEIGHT_PADDING
+				&&	positionsList.get(positionsList.size()-1).y + deltaY < this.getHeight() - SCREEN_HEIGHT_PADDING
+			) {
+				this.addToXYInPositionList(deltaX, deltaY);
+			}
+			m_lastX = x;
+			m_lastY = y;
+		}
+		invalidate();
+		return true;
+		
+	}
+	
+	
 }
