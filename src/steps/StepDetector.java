@@ -23,7 +23,7 @@ public class StepDetector {
      * Constantes de l'application
      */
 
-    private static final int     HISTORY_MAX_LENGTH     = 1024;
+    private static final int    HISTORY_MAX_LENGTH      = 1024;
     private static final int    N_HISTORY_LOOK_BACK     = 10;
     private static final float  CONSTANT_STEP_LENGTH    = 0.70f;
 
