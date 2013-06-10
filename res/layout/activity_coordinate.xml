@@ -61,7 +61,34 @@
 		</TextView>
 	</LinearLayout>
 	
-	
+	<LinearLayout android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+	    <Button
+	        android:id="@+id/startButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Start" >
+
+	    </Button>
+
+	    <Button
+	        android:id="@+id/saveButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Save" >
+
+	    </Button>
+	    
+	    <Button
+	        android:id="@+id/resetButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Reset" >
+
+	    </Button>	
+	</LinearLayout>
 	
     <LinearLayout android:id="@+id/mapLayout"
         android:orientation="vertical"

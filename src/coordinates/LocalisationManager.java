@@ -1,6 +1,7 @@
 package coordinates;
 
 import java.lang.Math;
+import java.util.Calendar;
 
 import cap.CapDetector;
 import cap.CapListener;
@@ -8,16 +9,21 @@ import steps.IStepListener;
 import steps.StepDetector;
 
 public class LocalisationManager{
-
+	
+	private CoordLog log;
+	private boolean startLog = false;
+	
 	private float currentPosition[] = {0,0,0};
 	private float oldPosition[] = {0,0,0};
-	private float cap;
+	private float currentCap;
+	private float oldCap;
 	
 	LocalisationListener localisationListener;
 	CapDetector capDetector;
 	StepDetector stepDetector;
 	
 	public LocalisationManager(CoordinateActivity activity){
+		log = new CoordLog(1000);
 		localisationListener = null;
 		
 		capDetector = new CapDetector(true);
@@ -26,11 +32,13 @@ public class LocalisationManager{
 		//On recupere les nouveaux cap en non-stop
 		capDetector.addHasChangedListener(new CapListener(){
 			@Override
-			public void hasChanged(float capn, float oldCap,float pitch, float roll){
+			public void hasChanged(float capn, float oldCapn,float pitch, float roll){
 				if(capDetector.isV2())
-					cap = oldCap;
+					oldCap = oldCapn;
 				else
-					cap = capn;
+					oldCap = -1;
+				currentCap = capn;
+				log.add(currentCap<0?currentCap+360:currentCap, false, -1, Calendar.getInstance().getTimeInMillis());
 			}
 		});
 		
@@ -39,8 +47,15 @@ public class LocalisationManager{
 		stepDetector.addStepListener(new IStepListener() {
 			@Override
 			public void stepDetected(float _stepLength) {
-				computeNewPosition(_stepLength, cap);
-				capDetector.clearList();
+				if(capDetector.isV2()){
+					computeNewPosition(_stepLength, oldCap);
+					capDetector.clearList();
+					if(startLog)
+						log.add(currentCap<0?currentCap+360:currentCap, true, oldCap<0?oldCap+360:oldCap, Calendar.getInstance().getTimeInMillis());
+				}
+				else{
+					computeNewPosition(_stepLength, currentCap);
+				}
 			}
 		});
 		stepDetector.registerSensors();
@@ -65,7 +80,11 @@ public class LocalisationManager{
 	}
 	
 	public float getCurrentCap(){
-		return cap;
+		return currentCap;
+	}
+	
+	public CoordLog getCoordLog(){
+		return log;
 	}
 	
 	public CapDetector getCapDetector(){
@@ -74,6 +93,10 @@ public class LocalisationManager{
 	
 	public StepDetector getStepDetector(){
 		return stepDetector;
+	}
+	
+	public void setStartLog(boolean start){
+		startLog = start;
 	}
 	
 	public void setLocalisationListener(LocalisationListener listener){

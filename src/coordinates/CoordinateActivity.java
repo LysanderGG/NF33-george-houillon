@@ -7,21 +7,26 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import cap.CapDetector;
 import cap.CapListener;
 
 import com.example.nf33.R;
 
 public class CoordinateActivity extends StepActivity {
+	private static final String LOG_FILENAME = "'NF33'-dd-MM-yyyy-HH-mm-ss'.csv'";
+    private static final String LOG_DIRNAME  = "NF33-data";
+    private static final String TAG          = "NF33-data";
 
-	TextView textViewStep, tvAmpli;
+	TextView textViewStep, tvAmpli, capText;
 	ProgressBar progressBarCap;
-	//SeekBar seekBarAmplitude;
 	int nbStep = 0;
 	
 	/** * The sensor manager */
@@ -46,6 +51,28 @@ public class CoordinateActivity extends StepActivity {
 		tvAmpli = (TextView) findViewById(R.id.tv_ampli);
 		progressBarCap = (ProgressBar) findViewById(R.id.ProgressBarCap);
 		progressBarCap.setMax(360);
+		capText = (TextView) findViewById(R.id.TextViewCap);
+		
+		findViewById(R.id.startButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				localisationManager.setStartLog(true);
+			}
+		});
+		
+		findViewById(R.id.resetButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				localisationManager.getCoordLog().clear();
+			}
+		});
+		
+		findViewById(R.id.saveButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				localisationManager.getCoordLog().writeLogFile(TAG, LOG_DIRNAME, LOG_FILENAME, true);
+			}
+		});
 		
 		// Instantiate the SensorManager
 		m_sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -67,10 +94,14 @@ public class CoordinateActivity extends StepActivity {
 		capDetector.addHasChangedListener(new CapListener() {
 			@Override
 			public void hasChanged(float cap, float oldCap, float pitch, float roll) {
-				if(cap < 0)
+				if(cap < 0){
 					progressBarCap.setProgress((int) cap+360);
-				else
+					capText.setText(Float.toString(cap+360));
+				}
+				else{
 					progressBarCap.setProgress((int) cap);
+					capText.setText(Float.toString(cap));
+				}
 			}
 		});
 		
