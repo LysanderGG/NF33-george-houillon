@@ -68,7 +68,9 @@ public class CapDetector implements SensorEventListener {
 	}
 	
 	public float getOldCap(){
-		if(capList.size()<PAST_ITERATION)
+		if(capList.size()==0)
+			return 0;
+		else if(capList.size()<=PAST_ITERATION)
 			return capList.get(0);
 		else
 			return capList.get(capList.size()-PAST_ITERATION);
