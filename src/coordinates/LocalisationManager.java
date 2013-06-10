@@ -61,6 +61,10 @@ public class LocalisationManager{
 		localisationListener.onNewPosition(oldPosition, currentPosition);
 	}
 	
+	public float getCurrentCap(){
+		return cap;
+	}
+	
 	public CapDetector getCapDetector(){
 		return capDetector;
 	}
