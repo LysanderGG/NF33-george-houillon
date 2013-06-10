@@ -34,7 +34,8 @@
         
         <activity
             android:name="steps.MainActivity"
-            android:label="@string/app_name" > 
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait"> 
         </activity>
         
         <activity
