@@ -30,7 +30,7 @@
             android:id="@+id/tv_ampli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/amplitude"
+            android:text="@string/sensibilite"
             android:width="90dp" />
 
         <SeekBar

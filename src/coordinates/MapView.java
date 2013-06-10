@@ -218,7 +218,7 @@ public class MapView extends View{
 		case MotionEvent.ACTION_MOVE:
 			float deltaX = x - m_lastX;
 			float deltaY = y - m_lastY;
-			// The last point must stay in the view 
+			// The last point must stay in the view display zone.
 			if(		positionsList.get(positionsList.size()-1).x + deltaX > SCREEN_WIDTH_PADDING
 				&&	positionsList.get(positionsList.size()-1).x + deltaX < this.getWidth() - SCREEN_WIDTH_PADDING
 				&&	positionsList.get(positionsList.size()-1).y + deltaY > SCREEN_HEIGHT_PADDING
@@ -231,8 +231,9 @@ public class MapView extends View{
 		}
 		invalidate();
 		return true;
-		
 	}
+	
+	
 	
 	
 }

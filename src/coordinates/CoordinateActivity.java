@@ -88,7 +88,8 @@ public class CoordinateActivity extends StepActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 stepDetector.setAmplitudeSensibility(3.0f - (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
-                tvAmpli.setText(getString(R.string.amplitude) + " : " + stepDetector.getAmplitudeSensibility());
+                stepDetector.setLimitSensibility(3.0f - (float)(progress + 1) / (float)((seekBar.getMax() + 1) / 2.0f));
+                tvAmpli.setText(getString(R.string.sensibilite) + " : " + stepDetector.getAmplitudeSensibility());
             }
             
             @Override

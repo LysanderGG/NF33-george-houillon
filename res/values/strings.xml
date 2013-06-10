@@ -24,4 +24,5 @@
     <string name="xValue">X value : </string>
     <string name="yValue">Y value : </string>
     <string name="zValue">Z value : </string>
+    <string name="sensibilite">Sensibilité</string>
 </resources>
