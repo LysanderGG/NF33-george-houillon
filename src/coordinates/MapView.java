@@ -10,11 +10,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Display;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 
 public class MapView extends View{
 	public class Position{
@@ -232,8 +229,6 @@ public class MapView extends View{
 		invalidate();
 		return true;
 	}
-	
-	
-	
-	
 }
+
+

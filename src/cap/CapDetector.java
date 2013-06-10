@@ -1,9 +1,6 @@
 package cap;
 
 import java.util.ArrayList;
-
-import coordinates.MapView.Position;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
