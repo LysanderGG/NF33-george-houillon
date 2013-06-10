@@ -87,7 +87,7 @@ public class CapActivity extends Activity{
 		//listen to the cap
 		capDetector.addHasChangedListener(new CapListener(){
 				@Override
-				public void hasChanged(float cap, float pitch, float roll){
+				public void hasChanged(float cap, float oldCap, float pitch, float roll){
 					updateProgressBar(cap, pitch, roll);
 					xyAccelerationView.invalidate();
 				}

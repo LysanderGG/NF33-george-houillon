@@ -66,7 +66,7 @@ public class CoordinateActivity extends StepActivity {
 		capDetector = localisationManager.getCapDetector();
 		capDetector.addHasChangedListener(new CapListener() {
 			@Override
-			public void hasChanged(float cap, float pitch, float roll) {
+			public void hasChanged(float cap, float oldCap, float pitch, float roll) {
 				if(cap < 0)
 					progressBarCap.setProgress((int) cap+360);
 				else

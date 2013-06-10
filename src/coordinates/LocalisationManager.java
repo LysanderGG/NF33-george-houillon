@@ -26,8 +26,11 @@ public class LocalisationManager{
 		//On recupere les nouveaux cap en non-stop
 		capDetector.addHasChangedListener(new CapListener(){
 			@Override
-			public void hasChanged(float capn, float pitch, float roll){
-				cap = capn;
+			public void hasChanged(float capn, float oldCap,float pitch, float roll){
+				if(capDetector.isV2())
+					cap = oldCap;
+				else
+					cap = capn;
 			}
 		});
 		
@@ -36,7 +39,7 @@ public class LocalisationManager{
 		stepDetector.addStepListener(new IStepListener() {
 			@Override
 			public void stepDetected(float _stepLength) {
-				computeNewPosition(_stepLength, capDetector.getOldCap());
+				computeNewPosition(_stepLength, cap);
 				capDetector.clearList();
 			}
 		});

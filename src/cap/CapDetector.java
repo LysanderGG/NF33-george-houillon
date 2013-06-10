@@ -10,16 +10,18 @@ public class CapDetector implements SensorEventListener {
 	/**
 	 * Current value of the accelerometer
 	 */
-	float x, y, z;
+	private float x, y, z;
 
-	float[] acceleromterVector=new float[3];
-	float[] magneticVector=new float[3];
-	float[] resultMatrix=new float[9];
-	float[] values=new float[3];
+	private float[] acceleromterVector=new float[3];
+	private float[] magneticVector=new float[3];
+	private float[] resultMatrix=new float[9];
+	private float[] values=new float[3];
 	
-	ArrayList<Float> capList = new ArrayList<Float>(); 
-	boolean v2 = false;
+	private ArrayList<Float> capList = new ArrayList<Float>(); 
+	private boolean v2 = false;
 	private ArrayList<CapListener>  capListenerList;
+	
+	private int PAST_ITERATION = 10;
 	
 	public CapDetector(boolean _v2) {
 		capListenerList = new ArrayList<CapListener>();
@@ -45,7 +47,7 @@ public class CapDetector implements SensorEventListener {
 		
 		//emit a changing
 		for(CapListener listener : capListenerList)
-			listener.hasChanged(x,y,z);
+			listener.hasChanged(x,getOldCap(),y,z);
 		
 		if(v2)
 			capList.add(x);
@@ -66,10 +68,17 @@ public class CapDetector implements SensorEventListener {
 	}
 	
 	public float getOldCap(){
-		return capList.get(capList.size()-10);
+		if(capList.size()<PAST_ITERATION)
+			return capList.get(0);
+		else
+			return capList.get(capList.size()-PAST_ITERATION);
 	}
 	
 	public void clearList(){
 		capList.clear();
+	}
+	
+	public boolean isV2(){
+		return v2;
 	}
 }
