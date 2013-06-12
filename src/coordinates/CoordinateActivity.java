@@ -33,6 +33,7 @@ public class CoordinateActivity extends StepActivity {
 	private SensorManager m_sensorManager;
 	private Sensor m_magnetic;
 	private Sensor m_accelerometer;
+	//private Sensor m_orientation;
 	
 	CapDetector capDetector;	
 	StepDetector stepDetector;
@@ -76,10 +77,12 @@ public class CoordinateActivity extends StepActivity {
 		
 		// Instantiate the SensorManager
 		m_sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		// Instantiate the magnetic sensor and its max range
+		// Instantiate the magnetic sensor
 		m_magnetic = m_sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		// Instantiate the accelerometer
 		m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		//Instantiate the orientation sensor
+		//m_orientation = m_sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		
 
 		localisationManager = new LocalisationManager(this);
@@ -94,14 +97,14 @@ public class CoordinateActivity extends StepActivity {
 		capDetector.addHasChangedListener(new CapListener() {
 			@Override
 			public void hasChanged(float cap, float oldCap, float pitch, float roll) {
-				if(cap < 0){
+				/*if(cap < 0){
 					progressBarCap.setProgress((int) cap+360);
 					capText.setText(Float.toString(cap+360));
 				}
-				else{
+				else{*/
 					progressBarCap.setProgress((int) cap);
 					capText.setText(Float.toString(cap));
-				}
+				//}
 			}
 		});
 		
@@ -154,6 +157,7 @@ public class CoordinateActivity extends StepActivity {
         //unregister every sensor
         m_sensorManager.unregisterListener(capDetector, m_accelerometer); 
         m_sensorManager.unregisterListener(capDetector, m_magnetic);
+        //m_sensorManager.unregisterListener(capDetector, m_orientation);
         stepDetector.unregisterSensors();
         super.onPause();  
     }
@@ -163,6 +167,7 @@ public class CoordinateActivity extends StepActivity {
         //register listener
         m_sensorManager.registerListener(capDetector,m_accelerometer, SensorManager.SENSOR_DELAY_UI); 
         m_sensorManager.registerListener(capDetector,m_magnetic, SensorManager.SENSOR_DELAY_UI);
+        //m_sensorManager.registerListener(capDetector,m_orientation, SensorManager.SENSOR_DELAY_UI);
         stepDetector.registerSensors();
         super.onResume(); 
     }
@@ -172,6 +177,7 @@ public class CoordinateActivity extends StepActivity {
         //cancel register
         m_sensorManager.unregisterListener(capDetector, m_accelerometer); 
         m_sensorManager.unregisterListener(capDetector, m_magnetic);
+        //m_sensorManager.unregisterListener(capDetector, m_orientation);
         stepDetector.unregisterSensors();
         super.onStop();  
     }

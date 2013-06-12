@@ -45,6 +45,15 @@ public class CapDetector implements SensorEventListener {
 		// the roll
 		z = (float) Math.toDegrees(values[2]);
 		
+		/*if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+		    //l' azimuth
+		    x = event.values[0];
+		    //le pitch
+		    y = event.values[1];
+		    //le roll
+		    z = event.values[2];
+		    }*/
+		
 		//emit a changing
 		for(CapListener listener : capListenerList)
 			listener.hasChanged(x,getOldCap(),y,z);
