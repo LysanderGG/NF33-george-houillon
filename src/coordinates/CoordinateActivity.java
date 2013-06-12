@@ -25,7 +25,7 @@ public class CoordinateActivity extends StepActivity {
     private static final String LOG_DIRNAME  = "NF33-data";
     private static final String TAG          = "NF33-data";
 
-	TextView textViewStep, tvAmpli, capText;
+	TextView textViewStep, tvAmpli;
 	ProgressBar progressBarCap;
 	int nbStep = 0;
 	
@@ -52,7 +52,6 @@ public class CoordinateActivity extends StepActivity {
 		tvAmpli = (TextView) findViewById(R.id.tv_ampli);
 		progressBarCap = (ProgressBar) findViewById(R.id.ProgressBarCap);
 		progressBarCap.setMax(360);
-		capText = (TextView) findViewById(R.id.TextViewCap);
 		
 		findViewById(R.id.startButton).setOnClickListener(new OnClickListener() {
 			@Override
@@ -97,14 +96,10 @@ public class CoordinateActivity extends StepActivity {
 		capDetector.addHasChangedListener(new CapListener() {
 			@Override
 			public void hasChanged(float cap, float oldCap, float pitch, float roll) {
-				/*if(cap < 0){
+				if(cap < 0)
 					progressBarCap.setProgress((int) cap+360);
-					capText.setText(Float.toString(cap+360));
-				}
-				else{*/
+				else
 					progressBarCap.setProgress((int) cap);
-					capText.setText(Float.toString(cap));
-				//}
 			}
 		});
 		
