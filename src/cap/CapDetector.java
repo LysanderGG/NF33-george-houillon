@@ -21,7 +21,7 @@ public class CapDetector implements SensorEventListener {
 	private boolean v2 = false;
 	private ArrayList<CapListener>  capListenerList;
 	
-	private int PAST_ITERATION = 10;
+	private int PAST_ITERATION = 14;
 	
 	public CapDetector(boolean _v2) {
 		capListenerList = new ArrayList<CapListener>();
