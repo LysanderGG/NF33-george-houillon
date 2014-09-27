@@ -160,8 +160,7 @@ public class StepDetector {
             float n = Math.min(history.size(), N_HISTORY_LOOK_BACK);
 
             boolean useXAxis = false,
-                    useYAxis = false,
-                    useZAxis = false;
+                    useYAxis = false;
 
             if (n > 0) {
                 for (int i = 0; i < n; ++i) {
@@ -188,13 +187,9 @@ public class StepDetector {
                     useXAxis = true;
                 } else if(minNorm == normY) {
                     useYAxis = true;
-                } else {
-                    useZAxis = true;
                 }
-            } else {
-                // utilise l'axe Z par défaut
-                useZAxis = true;
             }
+            
             if (useXAxis) {
                 norm = Math.abs(_x);
                 m_parentActivity.setMajorAxis(StepActivity.AXIS_X);

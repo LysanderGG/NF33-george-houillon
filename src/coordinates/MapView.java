@@ -56,9 +56,7 @@ public class MapView extends View{
 	private Thread background;
 	
 	
-	
-	@SuppressWarnings("deprecation")
-    public MapView(Context context){
+	public MapView(Context context){
 		super(context);
 		activity = (CoordinateActivity) context;
 		

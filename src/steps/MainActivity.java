@@ -2,7 +2,6 @@ package steps;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
@@ -19,8 +18,7 @@ public class MainActivity extends StepActivity implements IStepListener {
 
     private int         m_iStepsCounter    = 0;
     
-    private TextView    m_tvLogs,
-                        m_tvLogButton,
+    private TextView    m_tvLogButton,
                         m_tvStepsCounter,
                         m_tvAxis,
                         m_tvLimit,
@@ -43,7 +41,6 @@ public class MainActivity extends StepActivity implements IStepListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        m_tvLogs         = (TextView)findViewById(R.id.tvLogs);
         m_tvLogButton    = (TextView)findViewById(R.id.tv_log_button);
         m_tvStepsCounter = (TextView)findViewById(R.id.tv_steps_counter);
         m_tvAxis         = (TextView)findViewById(R.id.tv_axis);

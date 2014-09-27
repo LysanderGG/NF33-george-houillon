@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-import steps.MyLogs.LogItem;
 import android.os.Environment;
 import android.util.Log;
 
